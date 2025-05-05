@@ -1,0 +1,1316 @@
+/* ==UserStyle==
+@name           Better Bluesky
+@namespace      https://bsky.app/profile/fenny.zone
+@version        2025-05-04
+@description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
+@author         https://bsky.app/profile/fenny.zone
+@license        MIT
+@match          https://*.bsky.app/*
+
+@var select tweak-option-use-title "Use Custom Title" {
+  "yes:Yes": "none",
+  "no:No": "0px"
+}
+@var text tweak-option-title "Custom Title (in quotes)" "'☁️'"
+@var text tweak-option-font "Font Family" "'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui;"
+@var number tweak-option-line-height "Line Height" [1.3, null, null, 0.05]
+@var select tweak-option-text-transform "Text Transform" {
+  "none:None": "revert",
+  "lowercase:lowercase": "lowercase",
+  "uppercase:UPPERCASE": "uppercase"
+}
+@var select tweak-option-disable-text-outlines "Disable focus outlines on text fields" {
+  "yes:Yes": "none",
+  "no:No": "1px auto"
+}
+@var select tweak-option-small-link-previews "Small Link Previews" {
+  "yes:Yes": "yes",
+  "no:No*": "no"
+}
+@var color tweak-option-bg "Light Mode Background" #f9f3ec
+@var color tweak-option-accent "Light Mode Accent" #388098
+@var color tweak-option-text "Light Mode Text Color" #9e5574
+@var color tweak-option-bg-dark "Dark Mode Background" #222232
+@var color tweak-option-accent-dark "Dark Mode Accent" #f48da4
+@var color tweak-option-text-dark "Dark Mode Text Color" #8fc7e8
+==/UserStyle== */
+
+/*
+Section headings (use Cmd-F to navigate)
+!GENERAL
+!UI ELEMENTS
+!LAYOUT
+!FEED
+!POSTS
+!CONTEXT MENUS
+!MODALS
+!POST COMPOSER
+!IMAGES & VIDEO
+!NOTIFICATIONS
+!PROFILE
+!MESSAGES
+!SETTINGS
+*/
+
+@-moz-document domain("bsky.app") {
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    @keyframes scale-up {
+        from {
+            transform: scale(0);
+        }
+        to {
+            transform: scale(1);
+        }
+    }
+    /* 🚨📲🚨 if you're using Userscripts for iOS, delete the @-moz-document line
+       above, and the closing "}" at the very bottom of the file.
+       Then uncomment the block below and edit the values.
+
+       When the theme updates, just remove the @-moz-document lines again, and copy
+       this block into the new version. */
+    /* :root {
+        --tweak-option-use-title: none;
+        --tweak-option-title: '☁️';
+        --tweak-option-font: 'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui;
+        --tweak-option-line-height: 1.3;
+        --tweak-option-text-transform: revert;
+        --tweak-option-disable-text-outlines: none;
+        --tweak-option-small-link-previews: no;
+
+        --tweak-option-accent: #388098;
+        --tweak-option-bg: #f9f3ec;
+        --tweak-option-text: #9e5574;
+
+        --tweak-option-accent-dark: #f48da4;
+        --tweak-option-bg-dark: #222232;
+        --tweak-option-text-dark: #8fc7e8;
+    } */
+
+    /* ----- !GENERAL ----- */
+
+    :root,
+    :root.theme--light {
+        --tweak-accent: var(--tweak-option-accent, #388098);
+        --tweak-bg: var(--tweak-option-bg, #f9f3ec);
+        --tweak-fg: var(--tweak-option-text, #9e5574);
+
+        --tweak-bg-secondary: color-mix(in srgb, var(--tweak-bg) 90%, black);
+        --tweak-bg-tertiary: color-mix(in srgb, var(--tweak-bg) 75%, black);
+        --tweak-bg-translucent: color-mix(in srgb, var(--tweak-bg) 75%, transparent);
+        --tweak-fg-translucent: color-mix(in srgb, var(--tweak-fg) 75%, transparent);
+        --tweak-fg-more-translucent: color-mix(in srgb, var(--tweak-fg) 25%, transparent);
+        --tweak-accent-translucent: color-mix(in srgb, var(--tweak-accent) 50%, transparent);
+        --tweak-accent-more-translucent: color-mix(in srgb, var(--tweak-accent) 25%, transparent);
+
+        --tweak-radius: 14px;
+        --tweak-blur: blur(30px);
+        --tweak-shadow: rgba(0, 0, 0, 0.3) 0px 5px 20px;
+
+        --background: var(--tweak-bg) !important;
+        --backgroundLight: var(--tweak-bg) !important;
+        --text: var(--tweak-fg) !important;
+        background-color: var(--tweak-bg) !important;
+    }
+
+    :root.theme--dim {
+        --tweak-accent: var(--tweak-option-accent-dark, #f48da4);
+        --tweak-bg: var(--tweak-option-bg-dark, #222232);
+        --tweak-fg: var(--tweak-option-text-dark, #8fc7e8);
+
+        --tweak-bg-secondary: color-mix(in srgb, var(--tweak-bg) 90%, white);
+        --tweak-bg-tertiary: color-mix(in srgb, var(--tweak-bg) 75%, white);
+    }
+
+    :root.theme--dark body::after {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: var(--tweak-option-bg-dark);
+        width: 100vw;
+        content: 'To use Better Bluesky, set your dark theme to "Dim" in Settings > Appearance!';
+        color: var(--tweak-option-text-dark);
+        text-align: center;
+    }
+
+    * {
+        border: 0px solid var(--tweak-fg-more-translucent) !important;
+        text-decoration-color: currentColor !important;
+        -webkit-font-smoothing: auto;
+    }
+    *:focus {
+        outline: none;
+    }
+    *:focus-visible {
+        outline: 1px auto;
+    }
+    *:is(input, textarea, .ProseMirror):focus-visible {
+        outline: var(--tweak-option-disable-text-outlines, none);
+    }
+    *:not(input, textarea, .ProseMirror) {
+        text-transform: var(--tweak-option-text-transform, 'lowercase');
+    }
+
+    *:not(.material-symbols-outlined, .material-icons) {
+        line-height: var(--tweak-option-line-height, 1.3) !important;
+        font-family: var( --tweak-option-font, 'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui) !important;
+    }
+    *::selection {
+        background-color: color-mix(in srgb, var(--tweak-fg) 25%, transparent);
+    }
+
+    /* new posts badges and some buttons */
+    .r-wzwllv {
+        background-color: var(--tweak-accent) !important;
+
+        /* text color for buttons */
+        button& > div {
+            color: var(--tweak-bg) !important;
+        }
+    }
+
+    /* override inline colors in light mode */
+    :where(:root.theme--light) {
+        /* active tab indicator */
+        div[style*="background-color: rgb(16, 131, 254)"] {
+            background-color: var(--tweak-accent) !important;
+        }
+        
+        /* various screen backgrounds */
+        [style*="background-color: rgb(255, 255, 255)"],
+        [style*="background-color: rgb(242, 242, 242)"] {
+            background-color: var(--tweak-bg) !important;
+        }
+
+        /* button hovers, content warning bars */
+        [style*="background-color: rgb(241, 243, 245)"],
+        /* post composer Cancel button hover */
+        [style*="background-color: rgb(204, 229, 255)"],
+        /* Reply settings unselected options */
+        [style*="background-color: rgb(226, 231, 236)"],
+        /* Feeds screen round icons */
+        [style*="background-color: rgb(230, 242, 255)"],
+        /* disabled Add button on muted words page */
+        [style*="background-color: rgb(1, 84, 173)"] {
+            background-color: var(--tweak-fg-more-translucent) !important;
+        }
+
+        /* primary text */
+        [style*="color: rgb(11, 15, 20)"],
+        /* context menu item text */
+        [style*="color: rgb(37, 51, 66)"] {
+            color: var(--tweak-fg) !important;
+        }
+
+        /* secondary dimmed text */
+        [style*="color: rgb(66, 87, 108)"] {
+            color: var(--tweak-fg-translucent) !important;
+        }
+
+        :is(
+            /* link text */
+            a,
+            span,
+            /* ex. language button on post composer */
+            button > div
+        )[style*="color: rgb(16, 131, 254)"] {
+            color: var(--tweak-accent) !important;
+        }
+
+        /* various icons (main tab bar, hamburger menu, Settings icons) */
+        [fill="hsl(211, 28%, 6%)"],
+        /* small icons, like Feeds icon in title bar */
+        [fill="hsl(211, 24%, 34.2%)"],
+        /* Feeds screen round icons */
+        [fill="hsl(211, 99%, 53%)"],
+        /* Feeds screen chevrons */
+        [fill="hsl(211, 20%, 62.4%)"],
+        /* Pinned Feeds pin icons */
+        [fill="#0085ff"],
+        /* Change Handle arrow */
+        [fill="hsl(211, 99%, 42%)"],
+        /* plus icons */
+        [fill="hsl(211, 24%, 43.6%)"] {
+            fill: var(--tweak-fg) !important;
+        }
+    }
+
+    /* override inline colors in dark mode */
+    :where(:root.theme--dim) {
+        /* active tab indicator */
+        div[style*="background-color: rgb(32, 139, 254)"] {
+            background-color: var(--tweak-accent) !important;
+        }
+        
+        /* various screen backgrounds */
+        [style*="background-color: rgb(22, 30, 39)"] {
+            background-color: var(--tweak-bg) !important;
+        }
+
+        /* button hovers, content warning bars */
+        [style*="background-color: rgb(30, 41, 54)"],
+        /* post composer Cancel button hover */
+        [style*="background-color: rgb(19, 63, 109)"],
+        /* Reply settings unselected options */
+        [style*="background-color: rgb(38, 53, 68)"],
+        /* Feeds screen round icons */
+        [style*="background-color: rgb(21, 52, 85)"],
+        /* disabled Add button on muted words page */
+        [style*="background-color: rgb(10, 95, 186)"] {
+            background-color: var(--tweak-fg-more-translucent) !important;
+        }
+
+        /* primary text */
+        [style*="color: rgb(241, 243, 245)"],
+        /* context menu item text */
+        [style*="color: rgb(215, 221, 228)"] {
+            color: var(--tweak-fg) !important;
+        }
+
+        /* secondary dimmed text */
+        [style*="color: rgb(174, 187, 201)"] {
+            color: var(--tweak-fg-translucent) !important;
+        }
+
+        /* link text */
+        :is(
+            a,
+            span,
+            /* ex. language button on post composer */
+            button > div
+        )[style*="color: rgb(32, 139, 254)"] {
+            color: var(--tweak-accent) !important;
+        }
+
+        /* various icons (main tab bar, hamburger menu, Settings icons) */
+        [fill="hsl(211, 20%, 95.3%)"],
+        /* small icons, like Feeds icon in title bar */
+        [fill="hsl(211, 20%, 73.6%)"],
+        /* Feeds screen round icons */
+        [fill="hsl(211, 99%, 56%)"],
+        /* Feeds screen chevrons */
+        [fill="hsl(211, 24%, 47.2%)"],
+        /* Pinned Feeds pin icons */
+        [fill="#0085ff"],
+        /* Change Handle arrow */
+        [fill="hsl(211, 99%, 64.8%)"],
+        /* plus icons */
+        [fill="hsl(211, 20%, 64.8%)"] {
+            fill: var(--tweak-fg) !important;
+        }
+    }
+
+    /* ----- !UI ELEMENTS ----- */
+
+    /* text fields */
+    /* TODO: might be better to include instead of exclude */
+    input:not(
+        [role="search"],
+        [data-testid="searchInput"],
+        [placeholder="Username or email address"],
+        [placeholder="Password"],
+        [placeholder="Enter a word or tag"],
+        [placeholder="Search Tenor"],
+        [aria-label="New handle"]
+    ),
+    textarea:not(
+        [placeholder="Alt text"],
+        [placeholder="Add alt text (optional)"],
+        [placeholder="Write a message"]
+    ),
+    /* list add users search box */
+    div:has(> input[data-testid="searchInput"]) {
+        background: var(--tweak-fg-more-translucent) !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder,
+    p[data-placeholder]::before,
+    [data-testid="composePostView"] [contenteditable="true"] {
+        color: var(--tweak-fg-translucent) !important;
+    }
+
+    textarea {
+        resize: vertical !important;
+    }
+
+    /* reply settings hover and selected */
+    div[aria-label="Edit post interaction settings"] :is(
+        button[aria-checked="true"] > div,
+        /* light */
+        div[style*="background-color: rgb(212, 219, 226)"],
+        /* dark */
+        div[style*="background-color: rgb(46, 64, 82)"]
+    ) {
+        background: var(--tweak-fg-translucent) !important;
+
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* rectangular buttons (ex. Add App Password) */
+    /* light */
+    :is(button, a)[style*="background-color: rgb(16, 131, 254)"],
+    /* dark */
+    :is(button, a)[style*="background-color: rgb(32, 139, 254)"],
+    /* dangerous buttons (Cancel, Deactivate) */
+    /* light */
+    button[style*="background-color: rgb(244, 11, 66)"],
+    /* dark */
+    button[style*="background-color: rgb(245, 41, 88)"],
+    /* oval buttons (ex. on Change Your Email modal) */
+    button[style*="background-color: rgb(0, 133, 255)"] {
+        background-color: var(--tweak-accent) !important;
+
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* rectangular buttons (ex. Add App Password) hover */
+    /* light */
+    :is(button, a)[style*="background-color: rgb(1, 104, 213)"],
+    /* dark */
+    :is(button, a)[style*="background-color: rgb(76, 162, 254)"],
+    /* dangerous buttons hover */
+    /* light */
+    button[style*="background-color: rgb(205, 10, 55)"],
+    /* dark */
+    button[style*="background-color: rgb(247, 84, 122)"],
+    /* oval buttons (ex. on Change Your Email modal) */
+    button[style*="background-color: rgb(0, 133, 255)"]:hover {
+        background-color: var(--tweak-fg) !important;
+        opacity: 1 !important;
+
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* disabled rectangular buttons - ex Edit My Feeds, change handle */
+    /* light */
+    button[style*="background-color: rgb(212, 219, 226)"],
+    /* dark */
+    button[style*="background-color: rgb(46, 64, 82)"] {
+        background-color: var(--tweak-fg-more-translucent) !important;
+
+        > div {
+            color: var(--tweak-fg) !important;
+        }
+    }
+
+    /* contrasting buttons (ex. Follow on search page, Pin to home) */
+    /* light */
+    button[style*="background-color: rgb(0, 0, 0)"],
+    /* dark */
+    button[style*="background-color: rgb(241, 243, 245)"] {
+        background-color: var(--tweak-accent) !important;
+
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+        
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* profile and Post button hover */
+    button:is(
+        [data-testid="composerPublishBtn"]:not([aria-disabled="true"]),
+        /* light */
+        [style*="background-color: rgb(16, 131, 254)"],
+        /* dark */
+        [style*="background-color: rgb(38, 53, 68)"]
+    ):hover {
+        background: var(--tweak-fg-translucent) !important;
+
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* oval buttons (ex. on Change Email page) */
+
+    /* buttons with gradient backgrounds */
+    div[style*="background-image: linear-gradient"][style*="rgb(90, 113, 250)"] {
+        background: var(--tweak-accent) !important;
+
+        > div {
+            color: var(--tweak-bg) !important
+        }
+    }
+
+    /* on/off switches */
+    .r-1mhb1uw.r-1k25im9,
+    div[style*="height: 24px; width: 36px;"] {
+        justify-content: center;
+        border-width: 1px !important;
+        background: var(--tweak-fg-more-translucent) !important;
+
+        > div {
+            background: var(--tweak-fg-translucent) !important;
+
+            &.r-1ow6zhx, &[style*="align-self: flex-end"] {
+                margin-left: auto !important;
+                background: var(--tweak-accent) !important;
+            }
+        }
+    }
+
+    /* radio buttons */
+    div[role="radio"] > div[style*="border-radius: 999px"] {
+        border-width: 1px !important;
+    }
+    div[role="radio"][aria-checked="true"]
+        > div[style*="border-radius: 999px"]
+        > div[style*="border-radius: 999px"] {
+            background: var(--tweak-fg-translucent) !important;
+        }
+
+    /* checkboxes */
+    div[role="checkbox"] div[style*="border-color"] {
+        border-width: 1px !important;
+
+        &:is([aria-checked="true"] div) {
+            background-color: var(--tweak-bg-secondary) !important;
+        }
+    }
+
+    /* segmented controls */
+    div[role="radiogroup"] > [style*="flex-direction: row;"] > div[role="radio"] {
+        &[aria-checked="false"] > div {
+            background: var(--tweak-fg-more-translucent) !important;
+        }
+        &[aria-checked="true"] > div {
+            background: var(--tweak-fg-translucent) !important;
+            > div {
+                color: var(--tweak-bg) !important;
+            }
+        }
+    }
+
+    /* tooltips */
+    [data-tooltip]::after {
+        box-shadow: var(--tweak-shadow);
+        border-radius: 6px;
+        background-color: var(--tweak-bg);
+        color: var(--tweak-fg);
+
+        :root.theme--dim & {
+            border: 1px solid;
+            border-color: inherit;
+        }
+    }
+
+    /* toasts */
+    .r-umfvqw.r-18rd0c5.r-ctyi22 {
+        -webkit-backdrop-filter: var(--tweak-blur);
+        backdrop-filter: var(--tweak-blur);
+        box-shadow: var(--tweak-shadow);
+        background-color: var(--tweak-bg-translucent);
+        :root.theme--dim & {
+            border-width: 1px !important;
+        }
+        > div {
+            color: var(--tweak-fg);
+        }
+        > svg path {
+            fill: var(--tweak-fg);
+        }
+    }
+
+    /* notification badge */
+    div[aria-label*="unread items"] {
+        background-color: var(--tweak-accent) !important;
+        color: var(--tweak-bg) !important;
+    }
+
+    /* ----- !LAYOUT ----- */
+
+    /* blur toolbar backgrounds */
+    /* top bars */
+    div:has(> div > [data-testid$="-selector"]),
+    /* bottom bar */
+    nav[style*="position: fixed; bottom: 0px; left: 0px; right: 0px;"],
+    /* profile feeds bar */
+    div[data-testid="profilePager"] {
+        -webkit-backdrop-filter: var(--tweak-blur) !important;
+        backdrop-filter: var(--tweak-blur) !important;
+        background: var(--tweak-bg-translucent) !important;
+
+        @media (prefers-reduced-transparency: reduce) {
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+            background: var(--tweak-bg-secondary) !important;
+        }
+    }
+
+    /* remove individual backgrounds on mobile top bar and feeds bar */
+    div:has(> div > [data-testid$="-selector"]) > div {
+        background: transparent !important;
+    }
+
+    /* remove backgrounds on mobile top bar items */
+    div:has(> [aria-label="Open navigation"]),
+    div:has(> [data-testid="viewHeaderHomeFeedPrefsBtn"]),
+    a[data-testid="viewHeaderHomeFeedPrefsBtn"] {
+        background: transparent !important;
+    }
+
+    /* mobile bottom bar */
+    nav[style*="position: fixed; bottom: 0px; left: 0px; right: 0px;"] {
+        box-shadow: var(--tweak-shadow);
+
+        svg {
+            height: 28px;
+        }
+    }
+
+    /* don't fade top or bottom bars */
+    div:has(> [data-testid="homeScreenFeedTabs"]),
+    main:not(:has([data-testid="convoScreen"])) + nav[style*="position: fixed; bottom: 0px; left: 0px; right: 0px;"] {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    /* hamburger menu drawer */
+    div[data-testid='drawer'] {
+        box-shadow: var(--tweak-shadow);
+        background-color: var(--tweak-bg) !important;
+    }
+
+    /* hamburger menu drawer Help text */
+    button[aria-label="Get help"] > div {
+        color: var(--tweak-fg-translucent) !important;
+    }
+
+    /* ----- !FEED ----- */
+
+    /* custom title */
+    div:has(> svg > path[d^="M13.873 3.805C21.21"]) {
+        width: max(var(--tweak-option-use-title), 28px) !important;
+        text-align: center;
+
+        > svg {
+            display: var(--tweak-option-use-title);
+        }
+
+        &::after {
+            /* this is so hacky lol */
+            order: -1;
+            -webkit-background-clip: text;
+            background-clip: text;
+            background-color: var(--tweak-fg);
+            width: var(--tweak-option-use-title);
+            height: var(--tweak-option-use-title);
+            content: var(--tweak-option-title);
+            color: transparent;
+            font-size: 21px;
+        }
+    }
+
+    /* feed, profile, list tab container */
+    div[role="tablist"] > div > div {
+        margin-inline: auto;
+    }
+
+    /* feed, profile, list tab */
+    div[role="tab"] {
+        transition: background 125ms;
+        margin-inline: 3.5px;
+        border-radius: var(--tweak-radius);
+        background-clip: padding-box;
+
+        > div {
+            padding-bottom: 0;
+        }
+
+        /* inactive tab names */
+        .r-oucylx div {
+            font-weight: 500 !important;
+        }
+    }
+
+    /* scroll to top button */
+    button[aria-label='Load new posts'],
+    button[aria-label='Load new notifications'] {
+        -webkit-backdrop-filter: var(--tweak-blur);
+        backdrop-filter: var(--tweak-blur);
+        box-shadow: var(--tweak-shadow);
+        background: var(--tweak-bg-translucent) !important;
+
+        :root.theme--dim & {
+            border-width: 1px !important;
+        }
+    }
+
+    /* floating compose buttons */
+    button[data-testid="composeFAB"],
+    button[data-testid="newChatFAB"] {
+        cursor: pointer;
+
+        > div {
+            box-shadow: var(--tweak-shadow);
+        }
+
+        svg {
+            stroke: var(--tweak-bg);
+        }
+
+        path[fill] {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* desktop compose button icons */
+    button[data-testid="composeFAB"]:not([data-testid="composeFAB"]) path,
+    button[data-testid="newChatFAB"]:not([data-testid="newChatFAB"]) path {
+        fill: var(--tweak-bg) !important;
+    }
+
+    /* ----- !POSTS ----- */
+    
+    /* posts */
+    div[data-testid^="feedItem-"] {
+        content-visibility: auto;
+        contain-intrinsic-height: auto 500px;
+    }
+
+    /* post hover overlay */
+    div[data-testid^='feedItem-'] > div > div:first-child:empty {
+        border-radius: var(--tweak-radius);
+    }
+
+    /* disable hand cursor */
+    div[data-testid^='feedItem-'].r-1loqt21,
+    div[data-testid^='feedItem-'] > .r-1loqt21 {
+        cursor: auto;
+    }
+
+    /* content warnings */
+    button[aria-label="Adult Content"] > div {
+        border-width: 1px !important;
+        background: transparent !important;
+
+        /* light */
+        &[style*="background-color: rgb(241, 243, 245)"],
+        /* dark */
+        &[style*="background-color: rgb(30, 41, 54)"] {
+            border-color: transparent !important;
+            background: var(--tweak-fg-more-translucent) !important;
+        }
+    }
+
+    /* quote posts */
+    div:is(
+        [data-testid='contentHider-post'],
+        [data-testid^="postThreadItem-"],
+        [data-testid="composePostView"]
+    ) :has(> [aria-label^="Post by"]),
+    /* URL cards in posts */
+    div:is(
+        [data-testid='contentHider-post'],
+        [data-testid^="postThreadItem-"]
+    ) a:not(
+        /*[aria-label^="Post by"] a,*/
+        [aria-label$="avatar"]
+    ):has(> div > div),
+    /* URL cards in post composer */
+    div[data-testid="composePostView"] div:has(> div > button[aria-label="Remove attachment"]) {
+        transition: background 125ms;
+        border-width: 1px !important;
+        border-radius: var(--tweak-radius);
+
+        &:hover {
+            border-color: transparent !important;
+            background: var(--tweak-fg-more-translucent) !important;
+        }
+
+        > div {
+            margin-top: 0 !important;
+            border-radius: var(--tweak-radius) !important;
+        }
+        
+        @container style(--tweak-option-small-link-previews: yes) {
+            > div:has(> div[data-expoimage="true"]) {
+                flex-direction: row !important;
+                
+                > div[data-expoimage="true"] {
+                    flex: 0 0 25%;
+                }
+            }
+        }
+    }
+    
+    /* top margin for URL cards */
+    div:is(
+        [data-testid='contentHider-post'],
+        [data-testid^="postThreadItem-"]
+    ) a:not(
+        /*[aria-label^="Post by"] a,*/
+        [aria-label$="avatar"]
+    ):has(> div > div) {
+        margin-top: 8px;
+    }
+
+    /* post actions */
+    [data-testid="contentHider-post"] + div {
+        color: var(--tweak-fg-translucent) !important;
+        
+        /* hover */
+        button[style*="background-color"] {
+            background-color: var(--tweak-fg-more-translucent) !important;
+        }
+
+        /* counts */
+        button div {
+            color: var(--tweak-fg-translucent) !important;
+        }
+
+        /* light */
+        path[fill="hsl(211, 20%, 53%)"],
+        /* dark */
+        path[fill="hsl(211, 20%, 56%)"] {
+            fill: var(--tweak-fg-translucent) !important;
+        }
+    }
+
+    /* reply lines */
+    div:has(~ div > [data-testid^="postThreadItem-"]) {
+        border-left-width: 1px !important;
+    }
+
+    /* thread lines */
+    .r-m5arl1 {
+        translate: -1px;
+        background-color: var(--tweak-fg-more-translucent) !important;
+        width: 1px;
+    }
+
+    /* long thread ellipses */
+    svg:has(> line + circle + circle + circle) {
+        translate: -2px;
+        width: 2px;
+        color: var(--tweak-fg-more-translucent) !important;
+
+        > line {
+            stroke: currentColor !important;
+        }
+
+        > circle {
+            fill: currentColor !important;
+        }
+    }
+
+    /* hand cursor for "view full thread" link */
+    .r-e69tdv ~ .css-1rynq56 {
+        cursor: pointer !important;
+    }
+
+    /* ----- !CONTEXT MENUS ----- */
+
+    /* disable language picker background dim */
+    div[aria-label="Toggle dropdown"] {
+        opacity: 0;
+    }
+
+    /* styles for the menu itself */
+    div[data-radix-menu-content],
+    /* these are used for the post language picker */
+    div[aria-label="Toggle dropdown"] + div:has(> button) {
+        transform-origin: top center;
+        -webkit-backdrop-filter: var(--tweak-blur);
+        backdrop-filter: var(--tweak-blur);
+        animation: 125ms scale-up;
+        border-radius: var(--tweak-radius) !important;
+        background: var(--tweak-bg-translucent) !important;
+
+        @media (prefers-reduced-transparency: reduce) {
+                -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            background: var(--tweak-bg) !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            animation-name: fade-in;
+        }
+
+        :root.theme--dim & {
+            border-width: 1px !important;
+        }
+
+        > div {
+            border-radius: var(--tweak-radius) !important;
+        }
+    }
+
+    /* menu item wrapper */
+    div[data-radix-menu-content] > div:not([role]),
+    /* list edit menu */ [data-radix-menu-content]:has(> .nativeDropdown-item) {
+        box-shadow: var(--tweak-shadow) !important;
+        background-color: transparent !important;
+    }
+
+    /* menu items */
+    div[data-radix-menu-content] div[role="menuitem"] {
+        &[style*="background-color"] {
+            background: var(--tweak-bg-secondary) !important;
+        }
+
+        > div {
+            font-weight: 400 !important;
+            font-size: 16px !important;
+            user-select: none;
+        }
+
+        &:first-child {
+            border-top-right-radius: var(--tweak-radius) !important;
+            border-top-left-radius: var(--tweak-radius) !important;
+        }
+        &:last-child {
+            border-bottom-right-radius: var(--tweak-radius) !important;
+            border-bottom-left-radius: var(--tweak-radius) !important;
+        }
+    }
+
+    /* language picker */
+    div[aria-label="Toggle dropdown"] + div:has(> button) {
+        transform-origin: bottom right;
+        box-shadow: var(--tweak-shadow);
+        padding-inline: 4px;
+    }
+
+    /* hover highlight for language picker options */
+    div[aria-label="Toggle dropdown"] + div > button:hover {
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.067) !important;
+
+        :root.theme--dim & {
+            background: rgba(255, 255, 255, 0.07) !important;
+        }
+    }
+
+    /* dividers */
+    div[data-radix-menu-content] div[role='separator'] {
+        background: var(--tweak-fg-more-translucent) !important;
+    }
+    div[aria-label="Toggle dropdown"] + div > div {
+        border-bottom-width: 1px !important;
+        border-color: var(--tweak-fg-more-translucent) !important;
+    }
+
+    /* fix padding for "Post language" label */
+    div[aria-label="Toggle dropdown"] + div > div:first-child {
+        border-radius: 0 !important;
+        padding-bottom: 16px;
+    }
+
+    /* ----- !MODALS ----- */
+
+    /* modals */
+    /* TODO some modals in Settings aren't matched by this */
+    div[role="dialog"]:not(:has([data-testid="composePostView"])),
+    div:has(> [data-testid="composePostView"]),
+    div:has(> div > [data-testid="editProfileModal"]),
+    div:has(> [data-testid="userAddRemoveListsModal"]) {
+        margin: 0 20px !important;
+        box-shadow: var(--tweak-shadow) !important;
+        border-radius: var(--tweak-radius) !important;
+        max-width: min(600px, calc(100vw - 40px)) !important;
+
+        :root.theme--dim & {
+            border-width: 1px !important;
+        }
+    }
+
+    /* blurred backgrounds */
+    /* hamburger menu */
+    div[aria-label="Close navigation footer"],
+    /* post composer and most other modals */
+    div[aria-label="Close active dialog"]:has([role="dialog"]),
+    /* edit profile */
+    div[style*="background-color: rgba(0, 0, 0, 0.8)"],
+    /* image viewer */
+    div:has(> [aria-label="Close image viewer"]) {
+        background: transparent !important;
+
+        /* the pseudo-element works around a Safari issue */
+        &::before {
+            position: fixed;
+            top: 0;
+            left: 0;
+            -webkit-backdrop-filter: var(--tweak-blur) !important;
+            backdrop-filter: var(--tweak-blur) !important;
+            animation: 250ms fade-in;
+            background: var(--tweak-bg-translucent) !important;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            content: '';
+
+            @media (prefers-reduced-transparency: reduce) {
+                -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+                background: var(--tweak-bg-secondary) !important;
+            }
+        }
+
+        /* remove dimming */
+        > [style*="opacity: 0.8"] {
+            display: none;
+        }
+    }
+
+    /* ----- !POST COMPOSER ----- */
+
+    /* vertically center */
+    div:has(> div > [data-testid='composePostView']) {
+        justify-content: center;
+    }
+
+    /* consistent padding */
+    div[data-testid='composePostView'] > div {
+        padding-top: 0 !important;
+    }
+
+    /* Cancel button */
+    div[data-testid="composePostView"] button[aria-label="Cancel"] > div {
+        color: var(--tweak-accent) !important;
+    }
+
+    /* exclamation point for missing alt text */
+    path[fill="#d11043"] {
+        fill: var(--tweak-fg) !important;
+    }
+
+    /* post composer and alt text text fields */
+    .ProseMirror :not(i, .material-symbols-outlined, .material-icons),
+    textarea[aria-label="Alt text"] {
+        color: var(--tweak-fg);
+        text-transform: none !important;
+    }
+
+    /* reply settings and media buttons */
+    div:has(> [aria-label="Gallery"]) path {
+        fill: var(--tweak-accent) !important;
+    }
+
+    /* character count circle */
+    div[data-testid='composePostView'] svg[width="30"][height="30"] path,
+    /* alt text character count circle */
+    div[aria-label="Add alt text"] svg[width="26"][height="26"] path {
+        stroke: var(--tweak-accent) !important;
+    }
+
+    /* URL card remove button */
+    button[aria-label="Remove attachment"] {
+        background: var(--tweak-accent) !important;
+
+        path[fill] {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+    
+    /* username autocomplete popup */
+    .tippy-box .items {
+        box-shadow: var(--tweak-shadow);
+        border-radius: var(--tweak-radius);
+        
+        :root.theme--dim & {
+            border-width: 1px !important;
+        }
+        
+        > div {
+            border-radius: var(--tweak-radius);
+        }
+        
+        button {
+            &[style*="background-color"] {
+                background-color: var(--tweak-accent) !important;
+                
+                div[style*="color"] {
+                    color: var(--tweak-bg) !important;
+                }
+            }
+            
+            &:first-child {
+                border-top-left-radius: var(--tweak-radius);
+                border-top-right-radius: var(--tweak-radius);
+            }
+            
+            &:last-child {
+                border-bottom-left-radius: var(--tweak-radius);
+                border-bottom-right-radius: var(--tweak-radius);
+            }
+        }
+    }
+
+    /* ----- !IMAGES & VIDEO ----- */
+
+    /* alt text indicator */
+    :is(
+        div[data-expoimage="true"],
+        button:has(> div[data-expoimage="true"])
+    ) ~ div[style*="bottom: 4px; right: 4px;"] {
+        border-radius: 4px;
+        background-color: var(--tweak-bg) !important;
+
+        > div > div {
+            color: var(--tweak-fg) !important;
+        }
+    }
+
+    /* image viewer buttons */
+    button[aria-label="Close image"],
+    button[aria-label='Previous image'],
+    button[aria-label='Next image'] {
+        opacity: 0.5;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        transition: opacity 125ms !important;
+        background: var(--tweak-bg-translucent);
+
+        @media (hover: hover) {
+            opacity: 0;
+
+            div:has([aria-label="Close image viewer"]):hover & {
+                opacity: 0.5;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    /* move close button to left */
+    div:has(> div > [aria-label="Close image"]) {
+        right: auto !important;
+        left: 10px;
+    }
+
+    /* image viewer button glyphs */
+    button[aria-label="Close image"] path {
+        fill: var(--tweak-fg);
+    }
+
+    button[aria-label='Previous image'] path,
+    button[aria-label='Next image'] path {
+        transform: scale(0.75);
+        transform-origin: center;
+        fill: var(--tweak-fg);
+    }
+
+    /* alt text */
+    div:has(> div[aria-label='Expand alt text']) {
+        box-shadow: var(--tweak-shadow);
+        background-color: var(--tweak-bg);
+    }
+    div[aria-label='Expand alt text'] > div {
+        cursor: text;
+        color: var(--tweak-fg) !important;
+        user-select: text;
+        text-transform: none !important;
+    }
+
+    /* video player control colors */
+    figure:has(> video) + div {
+        :is(div, path) {
+            color: var(--tweak-bg) !important;
+            fill: var(--tweak-bg) !important;
+        }
+
+        /* dark mode scrubber */
+        :root.theme--dim & [data-testid="scrubber"] {
+            [style*="background-color: rgb(241, 243, 245)"] {
+                background-color: var(--tweak-fg) !important;
+            }
+            [style*="background-color: rgba(255, 255, 255, 0.4)"] {
+                background-color: var(--tweak-fg-more-translucent) !important;
+            }
+        }
+    }
+
+    /* ----- !NOTIFICATIONS ----- */
+
+    div[data-testid="notificationsScreen"] {
+        /* notification spacing */
+        div[data-testid^='feedItem-'] {
+            margin: 8px 8px 0 !important;
+        }
+
+        /* round notification corners */
+        div[style*='background-color:'] {
+            border-radius: var(--tweak-radius);
+        }
+
+        /* highlight new notifications */
+        /* light */
+        div[style*='background-color: rgb(240, 247, 255)'],
+        /* dark */
+        div[style*='background-color: rgb(21, 41, 63)'] {
+            background: var(--tweak-fg-more-translucent) !important;
+        }
+
+        /* highlight mentions */
+        div[data-testid^='feedItem-'] > div > [role='link'] {
+            border-radius: 8px;
+            background: var(--tweak-bg-secondary) !important;
+        }
+    }
+
+    /* ----- !PROFILE ----- */
+
+    /* restore profile pic border */
+    div[data-testid="profileHeaderAviButton"] {
+        border: 2px solid var(--tweak-bg) !important;
+    }
+
+    /* hand cursor for profile pic */
+    div[data-testid='userAvatarImage'] {
+        cursor: pointer;
+    }
+    
+    /* verified badge */
+    :is(path, circle)[fill="hsl(211, 99%, 56%)"] + path[fill="#fff"] {
+        fill: var(--tweak-bg);
+    }
+
+    /* suggestions button */
+    [aria-label^="Show follows similar to"]:is(
+        [style*="background-color: rgb(0, 0, 0)"],
+        [style*="background-color: rgb(255, 255, 255)"]
+    ) {
+        background-color: var(--tweak-accent) !important;
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+    
+    /* Similar accounts box */
+    div:has(> div > svg > path[d^="M12 4a2.5 2.5"]) {
+        border-radius: var(--tweak-radius);
+    }
+
+    /* !MESSAGES */
+    
+    /* Chat requests banner and chat list entries */
+    a[aria-label="Chat request inbox"],
+    div:has(> a[href^="/messages/"]:not([href="/messages/settings"])) {
+        border-radius: var(--tweak-radius) !important;
+        background-color: var(--tweak-bg) !important;
+        
+        &:hover {
+            background-color: var(--tweak-fg-more-translucent) !important;
+        }
+    }
+    
+    a[href^="/messages/"]:not([href="/messages/settings"]) > div {
+        background-color: transparent !important;
+    }
+
+    /* sent message bubbles */
+    div[data-testid="convoScreen"] :is(
+        /* light */
+        div[style*="background-color: rgb(16, 131, 254)"],
+        /* dark */
+        div[style*="background-color: rgb(32, 139, 254)"]
+    ) {
+        background-color: var(--tweak-fg) !important;
+
+        > div, a {
+            color: var(--tweak-bg) !important;
+        }
+    }
+
+    /* message text field */
+    textarea[placeholder="Write a message"] {
+        resize: none !important;
+    }
+
+    /* send message button */
+    button[aria-label="Send message"] path[fill] {
+        fill: var(--tweak-bg) !important;
+    }
+
+    /* !SETTINGS */
+
+    /* round hovers */
+    div[style="flex: 1 1 0%; padding-top: 12px; padding-bottom: 12px;"] > * {
+        margin-inline: 10px;
+        border-radius: var(--tweak-radius);
+        overflow: hidden;
+    }
+
+    /* settings chevrons */
+    /* light */
+    path[fill="hsl(211, 20%, 53%)"],
+    /* dark */
+    path[fill="hsl(211, 20%, 56%)"] {
+        fill: var(--tweak-fg) !important;
+    }
+
+    /* email address */
+    /* light */
+    div[style*="color: rgb(140, 158, 178)"],
+    /* dark */
+    div[style*="color: rgb(91, 119, 149)"] {
+        color: var(--tweak-accent) !important;
+    }
+
+    /* "Sign in" text */
+    /* light */
+    div[data-testid="noSessionView"] div[style*="color: rgb(16, 131, 254)"],
+    /* dark */
+    div[data-testid="noSessionView"] div[style*="color: rgb(32, 139, 254)"] {
+        color: var(--tweak-accent) !important;
+    }
+
+    /* muted words circles */
+    div[aria-label="Manage your muted words and tags"] {
+        /* outer circles */
+        div:is(
+            /* light */
+            [style*="background-color: rgb(240, 247, 255)"],
+            /* dark */
+            [style*="background-color: rgb(21, 41, 63)"]
+        ) {
+            background-color: var(--tweak-bg) !important;
+        }
+
+        /* inner circles */
+        div:is(
+            /* light */
+            [style*="background-color: rgb(16, 131, 254)"],
+            /* dark */
+            [style*="background-color: rgb(32, 139, 254)"]
+        ) {
+            background-color: var(--tweak-fg-translucent) !important;
+        }
+    }
+}
