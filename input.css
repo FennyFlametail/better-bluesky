@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-05-04
+@version        2025-05-27
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -354,7 +354,7 @@ Section headings (use Cmd-F to navigate)
             color: var(--tweak-bg) !important;
         }
 
-        path {
+        > div > svg > path {
             fill: var(--tweak-bg) !important;
         }
     }
@@ -787,7 +787,7 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* counts */
-        button div {
+        div:is([data-testid="replyBtn"] > div, [data-testid="repostCount"], [data-testid="likeCount"]) {
             color: var(--tweak-fg-translucent) !important;
         }
 
@@ -1014,8 +1014,8 @@ Section headings (use Cmd-F to navigate)
         text-transform: none !important;
     }
 
-    /* reply settings and media buttons */
-    div:has(> [aria-label="Gallery"]) path {
+    /* post attachment buttons */
+    :is([data-testid="openGalleryBtn"], [data-testid="openGifBtn"], [aria-label="Open emoji picker"]) path {
         fill: var(--tweak-accent) !important;
     }
 
@@ -1138,18 +1138,29 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* video player control colors */
-    figure:has(> video) + div {
-        :is(div, path) {
+    div[aria-label="Embedded video player"] {
+        /* player controls */
+        button:is([aria-label="Play"], [aria-label="Mute"], [aria-label="Enter fullscreen"]) > svg > path {
             color: var(--tweak-bg) !important;
             fill: var(--tweak-bg) !important;
+            
+            :root.theme--dim & {
+                color: var(--tweak-fg) !important;
+                fill: var(--tweak-fg) !important;
+            }
+        }
+
+        /* light mode elapsed time */
+        :root.theme--light & button[aria-label="Play"] + div + div {
+            color: var(--tweak-bg) !important;
         }
 
         /* dark mode scrubber */
-        :root.theme--dim & [data-testid="scrubber"] {
-            [style*="background-color: rgb(241, 243, 245)"] {
+        :root.theme--dim & div[data-testid="scrubber"] {
+            div[style*="background-color: rgb(241, 243, 245)"] {
                 background-color: var(--tweak-fg) !important;
             }
-            [style*="background-color: rgba(255, 255, 255, 0.4)"] {
+            div[style*="background-color: rgba(255, 255, 255, 0.4)"] {
                 background-color: var(--tweak-fg-more-translucent) !important;
             }
         }
