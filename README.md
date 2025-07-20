@@ -1,15 +1,13 @@
-# postcss
+# Better Bluesky
 
-To install dependencies:
+A cleaner, friendlier Bluesky! Removes borders and adds translucency and blur effects. Choose a custom font and colors in Stylus to make it your own.
 
-```bash
-bun install
-```
+Learn more and install at https://userstyles.world/style/11956
 
-To run:
+![3](https://github.com/user-attachments/assets/e281c305-3944-41c9-921c-8a3bab014b02)
+
+## To build:
 
 ```bash
 bun run index.ts
 ```
-
-This project was created using `bun init` in bun v1.2.0. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
