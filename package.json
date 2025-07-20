@@ -1,0 +1,17 @@
+{
+  "name": "postcss",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hail2u/css-mqpacker": "github:hail2u/node-css-mqpacker",
+    "cssnano": "^7.0.6",
+    "postcss": "^8.5.3",
+    "postcss-nested": "^7.0.2"
+  }
+}
