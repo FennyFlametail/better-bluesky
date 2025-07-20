@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-07-02
+@version        2025-07-20
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -694,12 +694,6 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* ----- !POSTS ----- */
-    
-    /* posts */
-    div[data-testid^="feedItem-"] {
-        content-visibility: auto;
-        contain-intrinsic-height: auto 500px;
-    }
 
     /* post hover overlay */
     div[data-testid^='feedItem-'] > div > div:first-child:empty {
@@ -1235,7 +1229,7 @@ Section headings (use Cmd-F to navigate)
         border-radius: var(--tweak-radius);
     }
 
-    /* !MESSAGES */
+    /* ----- !MESSAGES ----- */
     
     /* Chat requests banner and chat list entries */
     a[aria-label="Chat request inbox"],
@@ -1276,7 +1270,12 @@ Section headings (use Cmd-F to navigate)
         fill: var(--tweak-bg) !important;
     }
 
-    /* !SETTINGS */
+    /* remove gap under message text field  */
+    div:has(> div > div > textarea[placeholder="Write a message"]) {
+        transform: none !important;
+    }
+
+    /* ----- !SETTINGS ----- */
 
     /* round hovers */
     div[style="flex: 1 1 0%; padding-top: 12px; padding-bottom: 12px;"] > * {
