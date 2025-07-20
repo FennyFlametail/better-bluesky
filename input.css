@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-05-27
+@version        2025-07-02
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -311,6 +311,7 @@ Section headings (use Cmd-F to navigate)
     /* text fields */
     /* TODO: might be better to include instead of exclude */
     input:not(
+        div[aria-label="Edit profile"] input,
         [role="search"],
         [data-testid="searchInput"],
         [placeholder="Username or email address"],
@@ -320,6 +321,7 @@ Section headings (use Cmd-F to navigate)
         [aria-label="New handle"]
     ),
     textarea:not(
+        div[aria-label="Edit profile"] textarea,
         [placeholder="Alt text"],
         [placeholder="Add alt text (optional)"],
         [placeholder="Write a message"]
@@ -555,7 +557,7 @@ Section headings (use Cmd-F to navigate)
     /* top bars */
     div:has(> div > [data-testid$="-selector"]),
     /* bottom bar */
-    nav[style*="position: fixed; bottom: 0px; left: 0px; right: 0px;"],
+    nav.r-1p0dtai,
     /* profile feeds bar */
     div[data-testid="profilePager"] {
         -webkit-backdrop-filter: var(--tweak-blur) !important;
@@ -575,14 +577,13 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* remove backgrounds on mobile top bar items */
-    div:has(> [aria-label="Open navigation"]),
-    div:has(> [data-testid="viewHeaderHomeFeedPrefsBtn"]),
+    button[aria-label="Open drawer menu"],
     a[data-testid="viewHeaderHomeFeedPrefsBtn"] {
         background: transparent !important;
     }
 
     /* mobile bottom bar */
-    nav[style*="position: fixed; bottom: 0px; left: 0px; right: 0px;"] {
+    nav.r-1p0dtai {
         box-shadow: var(--tweak-shadow);
 
         svg {
@@ -592,7 +593,7 @@ Section headings (use Cmd-F to navigate)
 
     /* don't fade top or bottom bars */
     div:has(> [data-testid="homeScreenFeedTabs"]),
-    main:not(:has([data-testid="convoScreen"])) + nav[style*="position: fixed; bottom: 0px; left: 0px; right: 0px;"] {
+    main:not(:has([data-testid="convoScreen"])) + nav.r-1p0dtai {
         opacity: 1 !important;
         pointer-events: auto !important;
     }
@@ -782,7 +783,7 @@ Section headings (use Cmd-F to navigate)
         color: var(--tweak-fg-translucent) !important;
         
         /* hover */
-        button[style*="background-color"] {
+        button[style*="background-color"]:hover {
             background-color: var(--tweak-fg-more-translucent) !important;
         }
 
@@ -809,6 +810,12 @@ Section headings (use Cmd-F to navigate)
         translate: -1px;
         background-color: var(--tweak-fg-more-translucent) !important;
         width: 1px;
+    }
+    
+    /* "View full thread" and "Continue thread" links */
+    div[data-testid="followingFeedPage-feed-flatlist"] a[href^="/profile/"] div[style*="font-variant: no-contextual"],
+    div[data-testid="postThreadScreen"] div.css-g5y9jx:has(+ div.css-g5y9jx.r-633pao.r-1wyyakw) div[style*="font-variant: no-contextual"] {
+        color: var(--tweak-fg) !important;
     }
 
     /* long thread ellipses */
