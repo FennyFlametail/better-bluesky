@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-07-20
+@version        2025-09-21
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -725,7 +725,7 @@ Section headings (use Cmd-F to navigate)
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"],
         [data-testid="composePostView"]
-    ) :has(> [aria-label^="Post by"]),
+    ) div:has(> [aria-label^="Post by"]),
     /* URL cards in posts */
     div:is(
         [data-testid='contentHider-post'],
