@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-09-21
+@version        2025-10-28_WIP
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -11,7 +11,7 @@
   "yes:Yes": "none",
   "no:No": "0px"
 }
-@var text tweak-option-title "Custom Title (in quotes)" "'☁️'"
+@var text tweak-option-title "Custom Title (in quotes)" "'☁️'" // FIXME not working
 @var text tweak-option-font "Font Family" "'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui;"
 @var number tweak-option-line-height "Line Height" [1.3, null, null, 0.05]
 @var select tweak-option-text-transform "Text Transform" {
@@ -169,8 +169,7 @@ Section headings (use Cmd-F to navigate)
     .r-wzwllv {
         background-color: var(--tweak-accent) !important;
 
-        /* text color for buttons */
-        button& > div {
+         > div {
             color: var(--tweak-bg) !important;
         }
     }
@@ -183,8 +182,7 @@ Section headings (use Cmd-F to navigate)
         }
         
         /* various screen backgrounds */
-        [style*="background-color: rgb(255, 255, 255)"],
-        [style*="background-color: rgb(242, 242, 242)"] {
+        [style*="background-color: rgb(255, 255, 255)"] {
             background-color: var(--tweak-bg) !important;
         }
 
@@ -202,14 +200,12 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* primary text */
-        [style*="color: rgb(11, 15, 20)"],
-        /* context menu item text */
-        [style*="color: rgb(37, 51, 66)"] {
+        [style*="color: rgb(0, 0, 0)"] {
             color: var(--tweak-fg) !important;
         }
 
         /* secondary dimmed text */
-        [style*="color: rgb(66, 87, 108)"] {
+        [style*="color: rgb(64, 81, 104)"] {
             color: var(--tweak-fg-translucent) !important;
         }
 
@@ -219,24 +215,24 @@ Section headings (use Cmd-F to navigate)
             span,
             /* ex. language button on post composer */
             button > div
-        )[style*="color: rgb(16, 131, 254)"] {
+        )[style*="color: rgb(0, 106, 255)"] {
             color: var(--tweak-accent) !important;
         }
 
-        /* various icons (main tab bar, hamburger menu, Settings icons) */
-        [fill="hsl(211, 28%, 6%)"],
+        /* top bar icons */
+        path[fill="#526580"],
         /* small icons, like Feeds icon in title bar */
-        [fill="hsl(211, 24%, 34.2%)"],
+        path[fill="hsl(211, 24%, 34.2%)"],
         /* Feeds screen round icons */
-        [fill="hsl(211, 99%, 53%)"],
+        path[fill="hsl(211, 99%, 53%)"],
         /* Feeds screen chevrons */
-        [fill="hsl(211, 20%, 62.4%)"],
+        path[fill="hsl(211, 20%, 62.4%)"],
         /* Pinned Feeds pin icons */
-        [fill="#0085ff"],
+        path[fill="#0085ff"],
         /* Change Handle arrow */
-        [fill="hsl(211, 99%, 42%)"],
+        path[fill="hsl(211, 99%, 42%)"],
         /* plus icons */
-        [fill="hsl(211, 24%, 43.6%)"] {
+        path[fill="hsl(211, 24%, 43.6%)"] {
             fill: var(--tweak-fg) !important;
         }
     }
@@ -249,7 +245,7 @@ Section headings (use Cmd-F to navigate)
         }
         
         /* various screen backgrounds */
-        [style*="background-color: rgb(22, 30, 39)"] {
+        [style*="background-color: rgb(21, 29, 40)"] {
             background-color: var(--tweak-bg) !important;
         }
 
@@ -267,14 +263,12 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* primary text */
-        [style*="color: rgb(241, 243, 245)"],
-        /* context menu item text */
-        [style*="color: rgb(215, 221, 228)"] {
+        [style*="color: rgb(255, 255, 255)"] {
             color: var(--tweak-fg) !important;
         }
 
         /* secondary dimmed text */
-        [style*="color: rgb(174, 187, 201)"] {
+        [style*="color: rgb(171, 184, 201)"] {
             color: var(--tweak-fg-translucent) !important;
         }
 
@@ -284,24 +278,24 @@ Section headings (use Cmd-F to navigate)
             span,
             /* ex. language button on post composer */
             button > div
-        )[style*="color: rgb(32, 139, 254)"] {
+        )[style*="color: rgb(15, 115, 255)"] {
             color: var(--tweak-accent) !important;
         }
 
-        /* various icons (main tab bar, hamburger menu, Settings icons) */
-        [fill="hsl(211, 20%, 95.3%)"],
+        /* top bar icons */
+        path[fill="#8D9DB4"],
         /* small icons, like Feeds icon in title bar */
-        [fill="hsl(211, 20%, 73.6%)"],
+        path[fill="hsl(211, 20%, 73.6%)"],
         /* Feeds screen round icons */
-        [fill="hsl(211, 99%, 56%)"],
+        path[fill="hsl(211, 99%, 56%)"],
         /* Feeds screen chevrons */
-        [fill="hsl(211, 24%, 47.2%)"],
+        path[fill="hsl(211, 24%, 47.2%)"],
         /* Pinned Feeds pin icons */
-        [fill="#0085ff"],
+        path[fill="#0085ff"],
         /* Change Handle arrow */
-        [fill="hsl(211, 99%, 64.8%)"],
+        path[fill="hsl(211, 99%, 64.8%)"],
         /* plus icons */
-        [fill="hsl(211, 20%, 64.8%)"] {
+        path[fill="hsl(211, 20%, 64.8%)"] {
             fill: var(--tweak-fg) !important;
         }
     }
@@ -588,31 +582,42 @@ Section headings (use Cmd-F to navigate)
 
         svg {
             height: 28px;
+            
+            path {
+                fill: var(--tweak-fg);
+            }
         }
-    }
-
-    /* don't fade top or bottom bars */
-    div:has(> [data-testid="homeScreenFeedTabs"]),
-    main:not(:has([data-testid="convoScreen"])) + nav.r-1p0dtai {
-        opacity: 1 !important;
-        pointer-events: auto !important;
     }
 
     /* hamburger menu drawer */
     div[data-testid='drawer'] {
         box-shadow: var(--tweak-shadow);
         background-color: var(--tweak-bg) !important;
+        
+        /* icons */
+        path {
+            fill: var(--tweak-fg);
+        }
     }
 
     /* hamburger menu drawer Help text */
     button[aria-label="Get help"] > div {
         color: var(--tweak-fg-translucent) !important;
     }
+    
+    /* hamburger menu notifications badge */
+    button[data-testid="menuItemButton-Notifications"] svg + div > div {
+        background-color: var(--tweak-accent) !important;
+        
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+    }
 
     /* ----- !FEED ----- */
 
     /* custom title */
-    div:has(> svg > path[d^="M13.873 3.805C21.21"]) {
+    /*div[style*="position: sticky; top: 0px;"] > div > button {
         width: max(var(--tweak-option-use-title), 28px) !important;
         text-align: center;
 
@@ -621,7 +626,7 @@ Section headings (use Cmd-F to navigate)
         }
 
         &::after {
-            /* this is so hacky lol */
+            /~ this is so hacky lol ~/
             order: -1;
             -webkit-background-clip: text;
             background-clip: text;
@@ -632,7 +637,7 @@ Section headings (use Cmd-F to navigate)
             color: transparent;
             font-size: 21px;
         }
-    }
+    }*/
 
     /* feed, profile, list tab container */
     div[role="tablist"] > div > div {
@@ -667,6 +672,10 @@ Section headings (use Cmd-F to navigate)
         :root.theme--dim & {
             border-width: 1px !important;
         }
+        
+        path {
+            fill: var(--tweak-accent);
+        }
     }
 
     /* floating compose buttons */
@@ -695,9 +704,9 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !POSTS ----- */
 
-    /* post hover overlay */
+    /* disable post hover overlay */
     div[data-testid^='feedItem-'] > div > div:first-child:empty {
-        border-radius: var(--tweak-radius);
+        background-color: transparent !important;
     }
 
     /* disable hand cursor */
@@ -882,12 +891,6 @@ Section headings (use Cmd-F to navigate)
             background: var(--tweak-bg-secondary) !important;
         }
 
-        > div {
-            font-weight: 400 !important;
-            font-size: 16px !important;
-            user-select: none;
-        }
-
         &:first-child {
             border-top-right-radius: var(--tweak-radius) !important;
             border-top-left-radius: var(--tweak-radius) !important;
@@ -895,6 +898,17 @@ Section headings (use Cmd-F to navigate)
         &:last-child {
             border-bottom-right-radius: var(--tweak-radius) !important;
             border-bottom-left-radius: var(--tweak-radius) !important;
+        }
+        
+        > div {
+            color: var(--tweak-fg) !important;
+            font-weight: 400 !important;
+            font-size: 16px !important;
+            user-select: none;
+        }
+        
+        svg path {
+            fill: currentColor !important; /* TEST */
         }
     }
 
@@ -950,7 +964,7 @@ Section headings (use Cmd-F to navigate)
 
     /* blurred backgrounds */
     /* hamburger menu */
-    div[aria-label="Close navigation footer"],
+    div[aria-label="Close drawer menu"],
     /* post composer and most other modals */
     div[aria-label="Close active dialog"]:has([role="dialog"]),
     /* edit profile */
@@ -966,18 +980,28 @@ Section headings (use Cmd-F to navigate)
             left: 0;
             -webkit-backdrop-filter: var(--tweak-blur) !important;
             backdrop-filter: var(--tweak-blur) !important;
-            animation: 250ms fade-in;
+            /* animation: 250ms fade-in; */
             background: var(--tweak-bg-translucent) !important;
             width: 100%;
             height: 100%;
             pointer-events: none;
             content: '';
+            
+            opacity: 1;
+            transition: opacity 250ms;
+            @starting-style {
+                opacity: 0;
+            }
 
             @media (prefers-reduced-transparency: reduce) {
                 -webkit-backdrop-filter: none !important;
                 backdrop-filter: none !important;
                 background: var(--tweak-bg-secondary) !important;
             }
+        }
+        
+        &[style*="background-color: rgba(0, 0, 0, 0)"]::before {
+            opacity: 0;
         }
 
         /* remove dimming */
