@@ -1,8 +1,8 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-11-12
-@description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
+@version        2025-11-13.a
+@description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
 @match          https://*.bsky.app/*
@@ -23,7 +23,7 @@
   "yes:Yes": "none",
   "no:No": "1px auto"
 }
-@var select tweak-option-small-link-previews "Small Link Previews" {
+@var select tweak-option-small-link-previews "Small Link Previews (Chrome/Safari only)" {
   "yes:Yes": "yes",
   "no:No*": "no"
 }
@@ -36,11 +36,11 @@
 ==/UserStyle== */
 
 /* To install using Userscripts for iOS/Mac:
-    1. Delete the @-moz-document line, and the final line (the lone "}").
-    2. Customize the :root block below with your desired options.
+    1. Customize the :root block below with your desired options.
+    2. Delete the @-moz-document line, and the final line (the lone "}").
     3. Paste the :root block below the long line with all the code.
 
-    When the theme updates, repeat step 1, then paste your customized :root block at the end of the new version.
+    When the theme updates, repeat steps 2 and 3.
 
 :root {
     --tweak-option-use-title: none;
@@ -167,22 +167,13 @@ Section headings (use Cmd-F to navigate)
         font-family: var( --tweak-option-font, 'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui) !important;
     }
     *::selection {
-        background-color: color-mix(in srgb, var(--tweak-fg) 25%, transparent);
-    }
-
-    /* new posts badges and some buttons */
-    .r-wzwllv {
-        background-color: var(--tweak-accent) !important;
-
-         > div {
-            color: var(--tweak-bg) !important;
-        }
+        background-color: var(--tweak-fg-more-translucent);
     }
 
     /* override inline colors in light mode */
     :where(:root.theme--light) {
-        /* hovered tab background */
-        div[role="tab"][style*="background-color: rgb(249, 250, 251)"] {
+        /* nav item and hovered tab background */
+        :is(a, div[role="tab"])[style*="background-color: rgb(249, 250, 251)"] {
             background-color: var(--tweak-bg-tertiary) !important;
         }
         
@@ -224,8 +215,8 @@ Section headings (use Cmd-F to navigate)
 
     /* override inline colors in dark mode */
     :where(:root.theme--dim) {
-        /* hovered tab background */
-        div[role="tab"][style*="background-color: rgb(28, 39, 54)"] {
+        /* nav item and hovered tab background */
+        :is(a, div[role="tab"])[style*="background-color: rgb(28, 39, 54)"] {
             background-color: var(--tweak-bg-tertiary) !important;
         }
 
@@ -263,10 +254,16 @@ Section headings (use Cmd-F to navigate)
     /* ----- !CONTROLS ----- */
 
     /* text fields */
-    /* FIXME reimplement */
+    input + div,
+    /* alt text box */
+    textarea + div,
     /* "Write your reply" fake text box at bottom of posts */
     button[aria-label="Compose reply"] {
         background: var(--tweak-fg-more-translucent) !important;
+        
+        div:has(> &) path {
+            fill: var(--tweak-fg) !important;
+        }
     }
 
     input::placeholder,
@@ -280,37 +277,13 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* reply settings hover and selected */
+    /* FIXME move to post composer section and fix */
     div[aria-label="Edit post interaction settings"] :is(
         button[aria-checked="true"] > div,
-        /* light */
-        div[style*="background-color: rgb(212, 219, 226)"],
-        /* dark */
-        div[style*="background-color: rgb(46, 64, 82)"]
+        :root.theme--light div[style*="background-color: rgb(212, 219, 226)"],
+        :root.theme--dim div[style*="background-color: rgb(46, 64, 82)"]
     ) {
-        background: var(--tweak-fg-translucent) !important;
-
-        > div {
-            color: var(--tweak-bg) !important;
-        }
-
-        > div > svg > path {
-            fill: var(--tweak-bg) !important;
-        }
-    }
-
-    /* rectangular buttons (ex. Add App Password) */
-    /* light */
-    :is(button, a)[style*="background-color: rgb(16, 131, 254)"],
-    /* dark */
-    :is(button, a)[style*="background-color: rgb(32, 139, 254)"],
-    /* dangerous buttons (Cancel, Deactivate) */
-    /* light */
-    button[style*="background-color: rgb(244, 11, 66)"],
-    /* dark */
-    button[style*="background-color: rgb(245, 41, 88)"],
-    /* oval buttons (ex. on Change Your Email modal) */
-    button[style*="background-color: rgb(0, 133, 255)"] {
-        background-color: var(--tweak-accent) !important;
+        background: var(--tweak-accent) !important;
 
         > div {
             color: var(--tweak-bg) !important;
@@ -321,50 +294,16 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* rectangular buttons (ex. Add App Password) hover */
-    /* light */
-    :is(button, a)[style*="background-color: rgb(1, 104, 213)"],
-    /* dark */
-    :is(button, a)[style*="background-color: rgb(76, 162, 254)"],
-    /* dangerous buttons hover */
-    /* light */
-    button[style*="background-color: rgb(205, 10, 55)"],
-    /* dark */
-    button[style*="background-color: rgb(247, 84, 122)"],
-    /* oval buttons (ex. on Change Your Email modal) */
-    button[style*="background-color: rgb(0, 133, 255)"]:hover {
-        opacity: 1 !important;
+    /* TODO style dangerous buttons */
+    
+    /* blue roundrect buttons */
+    button:is(
+        :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
+        :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"]
+    ) {
         background-color: var(--tweak-fg) !important;
-
-        > div {
-            color: var(--tweak-bg) !important;
-        }
-
-        path {
-            fill: var(--tweak-bg) !important;
-        }
-    }
-
-    /* disabled rectangular buttons - ex Edit My Feeds, change handle */
-    /* light */
-    button[style*="background-color: rgb(212, 219, 226)"],
-    /* dark */
-    button[style*="background-color: rgb(46, 64, 82)"] {
-        background-color: var(--tweak-fg-more-translucent) !important;
-
-        > div {
-            color: var(--tweak-fg) !important;
-        }
-    }
-
-    /* contrasting buttons (ex. Follow on search page, Pin to home) */
-    /* light */
-    button[style*="background-color: rgb(0, 0, 0)"],
-    /* dark */
-    button[style*="background-color: rgb(241, 243, 245)"] {
-        background-color: var(--tweak-accent) !important;
-
-        > div {
+        
+        div {
             color: var(--tweak-bg) !important;
         }
         
@@ -372,29 +311,24 @@ Section headings (use Cmd-F to navigate)
             fill: var(--tweak-bg) !important;
         }
     }
-
-    /* profile and Post button hover */
+    /* blue roundrect button hover */
     button:is(
-        [data-testid="composerPublishBtn"]:not([aria-disabled="true"]),
-        /* light */
-        [style*="background-color: rgb(16, 131, 254)"],
-        /* dark */
-        [style*="background-color: rgb(38, 53, 68)"]
-    ):hover {
-        background: var(--tweak-fg-translucent) !important;
-
-        > div {
+        :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
+        :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"]
+    ) {
+        background-color: var(--tweak-accent) !important;
+        
+        div {
             color: var(--tweak-bg) !important;
         }
-
+        
         path {
             fill: var(--tweak-bg) !important;
         }
     }
+    
 
-    /* oval buttons (ex. on Change Email page) */
-
-    /* buttons with gradient backgrounds */
+    /* buttons with gradient backgrounds (ex. compose FAB) */
     div[style*="background-image: linear-gradient"][style*="rgb(90, 113, 250)"] {
         background: var(--tweak-accent) !important;
 
@@ -420,7 +354,7 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* radio buttons */
+    /* FIXME radio buttons */
     div[role="radio"] > div[style*="border-radius: 999px"] {
         border-width: 1px !important;
     }
@@ -430,7 +364,7 @@ Section headings (use Cmd-F to navigate)
             background: var(--tweak-fg-translucent) !important;
         }
 
-    /* checkboxes */
+    /* FIXME checkboxes */
     div[role="checkbox"] div[style*="border-color"] {
         border-width: 1px !important;
 
@@ -465,7 +399,7 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* toasts */
+    /* FIXME toasts */
     .r-umfvqw.r-18rd0c5.r-ctyi22 {
         -webkit-backdrop-filter: var(--tweak-blur);
         backdrop-filter: var(--tweak-blur);
@@ -561,7 +495,7 @@ Section headings (use Cmd-F to navigate)
     /* ----- !FEED ----- */
 
     /* custom title */
-    div:has(+ div[data-testid="homeScreenFeedTabs"]) > div > button {
+    :is(div, button):has(> svg > path[d^="M13.873"]) {
         width: max(var(--tweak-option-use-title), 28px) !important;
         text-align: center;
 
@@ -570,7 +504,6 @@ Section headings (use Cmd-F to navigate)
         }
 
         &::after {
-            /* this is so hacky lol */
             order: -1;
             -webkit-background-clip: text;
             background-clip: text;
@@ -688,7 +621,9 @@ Section headings (use Cmd-F to navigate)
         [data-testid^="postThreadItem-"]
     ) a[target="_blank"],
     /* URL cards in post composer */
-    div[data-testid="composePostView"] div:has(> div > button[aria-label="Remove attachment"]),
+    div[data-testid="composePostView"] div:has(
+        > div > button[aria-label="Remove attachment"]
+    ),
     /* content warnings */
     button[aria-label="Adult Content"] > div {
         transition: background 125ms;
@@ -770,16 +705,8 @@ Section headings (use Cmd-F to navigate)
         }
     }
     
-    /* "View full thread" and "Continue thread" links */
-    div[data-testid="followingFeedPage-feed-flatlist"] a[href^="/profile/"] div[style*="font-variant: no-contextual"],
-    div[data-testid="postThreadScreen"] div.css-g5y9jx:has(+ div.css-g5y9jx.r-633pao.r-1wyyakw) div[style*="font-variant: no-contextual"] {
-        color: var(--tweak-fg) !important;
-    }
-
-    /* long thread ellipses */
+    /* thread line ellipses */
     svg:has(> line + circle + circle + circle) {
-        translate: -2px;
-        width: 2px;
         color: var(--tweak-fg-more-translucent) !important;
 
         > line {
@@ -789,6 +716,12 @@ Section headings (use Cmd-F to navigate)
         > circle {
             fill: currentColor !important;
         }
+    }
+    
+    /* "View full thread" and "Continue thread" links */
+    div[data-testid="followingFeedPage-feed-flatlist"] a[href^="/profile/"] div[style*="font-variant: no-contextual"],
+    div[data-testid="postThreadScreen"] div.css-g5y9jx:has(+ div.css-g5y9jx.r-633pao.r-1wyyakw) div[style*="font-variant: no-contextual"] {
+        color: var(--tweak-fg) !important;
     }
 
     /* hand cursor for "view full thread" link */
@@ -993,7 +926,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* post composer and alt text text fields */
-    .ProseMirror :not(i, .material-symbols-outlined, .material-icons),
+    .ProseMirror p,
     textarea[aria-label="Alt text"] {
         color: var(--tweak-fg);
         text-transform: none !important;
@@ -1073,17 +1006,6 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* ----- !IMAGES & VIDEO ----- */
-    
-    /* post image background */
-    div:is(
-        /* light */
-        [style*="background-color: rgb(249, 250, 251)"],
-        /* dark */
-        [style*="background-color: rgb(28, 39, 54)"]
-    ):has(div[data-expoimage="true"]) {
-        background-color: var(--tweak-bg) !important;
-    }
-    
 
     /* alt text indicator */
     :is(
@@ -1213,10 +1135,8 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* highlight new notifications */
-        /* light */
-        a[style*='background-color: rgb(245, 249, 255)'],
-        /* dark */
-        a[style*='background-color: rgb(18, 33, 54)'] {
+        :root.theme--light a[style*='background-color: rgb(245, 249, 255)'],
+        :root.theme--dim a[style*='background-color: rgb(18, 33, 54)'] {
             background: var(--tweak-accent-more-translucent) !important;
         }
         
@@ -1272,28 +1192,8 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !MESSAGES ----- */
     
-    /* Chat requests banner and chat list entries */
-    a[aria-label="Chat request inbox"],
-    div:has(> a[href^="/messages/"]:not([href="/messages/settings"])) {
-        border-radius: var(--tweak-radius) !important;
-        background-color: var(--tweak-bg) !important;
-        
-        &:hover {
-            background-color: var(--tweak-fg-more-translucent) !important;
-        }
-    }
-    
-    a[href^="/messages/"]:not([href="/messages/settings"]) > div {
-        background-color: transparent !important;
-    }
-
-    /* sent message bubbles */
-    div[data-testid="convoScreen"] :is(
-        /* light */
-        div[style*="background-color: rgb(16, 131, 254)"],
-        /* dark */
-        div[style*="background-color: rgb(32, 139, 254)"]
-    ) {
+    /* incoming messsage bubbles */
+    div[data-testid="convoScreen"] div[style*="align-self: flex-start"]:has(> div[data-word-wrap="1"]) {
         background-color: var(--tweak-fg) !important;
 
         > div, a {
@@ -1301,14 +1201,40 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* message text field */
-    textarea[placeholder="Write a message"] {
-        resize: none !important;
+    /* sent message bubbles */
+    div[data-testid="convoScreen"] div[style*="align-self: flex-end"]:has(> div[data-word-wrap="1"]) {
+        background-color: var(--tweak-accent) !important;
+
+        > div, a {
+            color: var(--tweak-bg) !important;
+        }
     }
 
-    /* send message button */
-    button[aria-label="Send message"] path[fill] {
-        fill: var(--tweak-bg) !important;
+    /* message text field */
+    div:has(> textarea[placeholder="Write a message"]) {
+        align-items: center;
+        background-color: var(--tweak-fg-more-translucent) !important;
+        
+        textarea {
+            padding-block: 0 !important;
+            resize: none !important;
+        }
+        
+        button {
+            margin-top: 0 !important;
+        }
+
+        button[aria-label="Open emoji picker"] path {
+            fill: var(--tweak-fg) !important;
+        }
+
+        button[aria-label="Send message"] {
+            background-color: var(--tweak-accent) !important;
+            
+            path {
+                fill: var(--tweak-bg) !important;
+            }
+        }
     }
 
     /* remove gap under message text field  */
@@ -1318,55 +1244,40 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !SETTINGS ----- */
 
-    /* round hovers */
-    div[style="flex: 1 1 0%; padding-top: 12px; padding-bottom: 12px;"] > * {
-        margin-inline: 10px;
-        border-radius: var(--tweak-radius);
-        overflow: hidden;
-    }
-
-    /* settings chevrons */
-    /* light */
-    path[fill="hsl(211, 20%, 53%)"],
-    /* dark */
-    path[fill="hsl(211, 20%, 56%)"] {
+    /* FIXME settings chevrons */
+    :root.theme--light path[fill="hsl(211, 20%, 53%)"],
+    :root.theme--dim path[fill="hsl(211, 20%, 56%)"] {
         fill: var(--tweak-fg) !important;
     }
 
-    /* email address */
-    /* light */
-    div[style*="color: rgb(140, 158, 178)"],
-    /* dark */
-    div[style*="color: rgb(91, 119, 149)"] {
+    /* FIXME email address */
+    :root.theme--light div[style*="color: rgb(140, 158, 178)"],
+    :root.theme--dim div[style*="color: rgb(91, 119, 149)"] {
         color: var(--tweak-accent) !important;
     }
 
-    /* "Sign in" text */
-    /* light */
-    div[data-testid="noSessionView"] div[style*="color: rgb(16, 131, 254)"],
-    /* dark */
-    div[data-testid="noSessionView"] div[style*="color: rgb(32, 139, 254)"] {
+    /* FIXME "Sign in" text */
+    div[data-testid="noSessionView"] div:is(
+        :root.theme--light div[style*="color: rgb(16, 131, 254)"],
+        :root.theme--dim div[style*="color: rgb(32, 139, 254)"]
+    ) {
         color: var(--tweak-accent) !important;
     }
 
-    /* muted words circles */
+    /* FIXME muted words circles */
     div[aria-label="Manage your muted words and tags"] {
         /* outer circles */
         div:is(
-            /* light */
-            [style*="background-color: rgb(240, 247, 255)"],
-            /* dark */
-            [style*="background-color: rgb(21, 41, 63)"]
+            :root.theme--light div[style*="background-color: rgb(240, 247, 255)"],
+            :root.theme--dim div[style*="background-color: rgb(21, 41, 63)"]
         ) {
             background-color: var(--tweak-bg) !important;
         }
 
         /* inner circles */
         div:is(
-            /* light */
-            [style*="background-color: rgb(16, 131, 254)"],
-            /* dark */
-            [style*="background-color: rgb(32, 139, 254)"]
+            :root.theme--light div[style*="background-color: rgb(16, 131, 254)"],
+            :root.theme--dim div[style*="background-color: rgb(32, 139, 254)"]
         ) {
             background-color: var(--tweak-fg-translucent) !important;
         }
