@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-11-04.a
+@version        2025-11-12
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter. Use the "Dim" (not "Dark") dark theme in Bluesky settings!
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -65,7 +65,7 @@
 /*
 Section headings (use Cmd-F to navigate)
 !GENERAL
-!UI ELEMENTS
+!CONTROLS
 !LAYOUT
 !FEED
 !POSTS
@@ -250,12 +250,7 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* link text */
-        :is(
-            a,
-            span,
-            /* ex. language button on post composer */
-            button > div
-        )[style*="color: rgb(15, 115, 255)"] {
+        :is(a, span)[style*="color: rgb(15, 115, 255)"] {
             color: var(--tweak-accent) !important;
         }
 
@@ -265,28 +260,12 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* ----- !UI ELEMENTS ----- */
+    /* ----- !CONTROLS ----- */
 
     /* text fields */
-    /* TODO: might be better to include instead of exclude */
-    input:not(
-        div[aria-label="Edit profile"] input,
-        [role="search"],
-        [data-testid="searchInput"],
-        [placeholder="Username or email address"],
-        [placeholder="Password"],
-        [placeholder="Enter a word or tag"],
-        [placeholder="Search Tenor"],
-        [aria-label="New handle"]
-    ),
-    textarea:not(
-        div[aria-label="Edit profile"] textarea,
-        [placeholder="Alt text"],
-        [placeholder="Add alt text (optional)"],
-        [placeholder="Write a message"]
-    ),
-    /* list add users search box */
-    div:has(> input[data-testid="searchInput"]) {
+    /* FIXME reimplement */
+    /* "Write your reply" fake text box at bottom of posts */
+    button[aria-label="Compose reply"] {
         background: var(--tweak-fg-more-translucent) !important;
     }
 
@@ -512,15 +491,17 @@ Section headings (use Cmd-F to navigate)
     /* ----- !LAYOUT ----- */
 
     /* blur toolbar backgrounds */
-    /* top bars */
+    /* tab bars */
     div:has(> div > div[data-testid$="-selector"]),
-    /* bottom bar */
-    nav.r-1p0dtai,
-    /* profile feeds bar */
-    div[data-testid="profilePager"] {
+    /* mobile nav bar */
+    nav.r-1p0dtai {
         -webkit-backdrop-filter: var(--tweak-blur) !important;
         backdrop-filter: var(--tweak-blur) !important;
         background: var(--tweak-bg-translucent) !important;
+        
+        > div {
+            background: transparent !important;
+        }
 
         @media (prefers-reduced-transparency: reduce) {
             -webkit-backdrop-filter: none !important;
@@ -529,29 +510,28 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* remove individual backgrounds on mobile top bar and feeds bar */
-    div:has(> div > div[data-testid$="-selector"]) > div {
-        background: transparent !important;
-    }
-
-    /* remove backgrounds on mobile top bar items */
+    /* remove backgrounds on top bar items */
     button[aria-label="Open drawer menu"],
     a[data-testid="viewHeaderHomeFeedPrefsBtn"] {
         background: transparent !important;
     }
+    
+    /* nav bar icons for all layouts */
+    nav[role="navigation"] svg {
+        height: 28px;
 
-    /* mobile bottom bar */
-    nav.r-1p0dtai {
-        box-shadow: var(--tweak-shadow);
-
-        svg {
-            height: 28px;
-            
-            path {
-                fill: var(--tweak-fg);
-            }
+        path {
+            fill: var(--tweak-fg);
         }
     }
+
+    /* mobile nav bar */
+    nav.r-1p0dtai {
+        box-shadow: var(--tweak-shadow);
+    }
+    
+    /* tablet/desktop nav icons */
+    
 
     /* hamburger menu drawer */
     div[data-testid='drawer'] {
@@ -661,10 +641,18 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* desktop compose button icons */
-    button[data-testid="composeFAB"]:not([data-testid="composeFAB"]) path,
-    button[data-testid="newChatFAB"]:not([data-testid="newChatFAB"]) path {
-        fill: var(--tweak-bg) !important;
+    /* desktop compose button */
+    /* TODO use these styles for other blue buttons */
+    button[aria-label="Compose new post"] {
+        background: var(--tweak-accent) !important;
+
+        div {
+            color: var(--tweak-bg) !important;      
+        }
+        
+        path {
+            fill: var(--tweak-bg) !important;   
+        }
     }
 
     /* ----- !POSTS ----- */
@@ -698,7 +686,7 @@ Section headings (use Cmd-F to navigate)
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
-    ) a:not([aria-label$="avatar"]):has(> div > div),
+    ) a[target="_blank"],
     /* URL cards in post composer */
     div[data-testid="composePostView"] div:has(> div > button[aria-label="Remove attachment"]),
     /* content warnings */
@@ -733,10 +721,7 @@ Section headings (use Cmd-F to navigate)
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
-    ) a:not(
-        /*[aria-label^="Post by"] a,*/
-        [aria-label$="avatar"]
-    ):has(> div > div) {
+    ) a[target="_blank"] {
         margin-top: 8px;
     }
 
@@ -760,12 +745,29 @@ Section headings (use Cmd-F to navigate)
             fill: var(--tweak-fg-translucent) !important;
         }
     }
-
+    
     /* thread lines */
-    .r-m5arl1 {
-        translate: -1px;
+    .r-m5arl1,
+    div[data-testid="postThreadScreen"] div[style*="; width: 2px"] {
         background-color: var(--tweak-fg-more-translucent) !important;
-        width: 1px;
+    }
+    /* nested thread lines */
+    div[data-testid="postThreadScreen"] {
+        /* var(--tweak-fg-more-translucent) won't work because of stacked lines */
+        --thread-border-color: color-mix(in srgb, var(--tweak-fg) 25%, var(--tweak-bg)) !important;
+
+        div[style*="border-right-width: 2px"] {
+            border-color: var(--thread-border-color) !important;
+            border-right-width: 2px !important;
+        }
+        div[style*="border-left-width: 2px"] {
+            border-color: var(--thread-border-color) !important;
+            border-left-width: 2px !important;
+        }
+        div[style*="border-bottom-width: 2px"] {
+            border-color: var(--thread-border-color) !important;
+            border-bottom-width: 2px !important;
+        }
     }
     
     /* "View full thread" and "Continue thread" links */
@@ -792,6 +794,15 @@ Section headings (use Cmd-F to navigate)
     /* hand cursor for "view full thread" link */
     .r-e69tdv ~ .css-1rynq56 {
         cursor: pointer !important;
+    }
+    
+    /* reply bar at bottom on mobile */
+    div[data-testid="postThreadScreen"] div[style*="background-image: linear-gradient"] {
+        background: transparent !important;
+    }
+    button[aria-label="Compose reply"] {
+        background: var(--tweak-fg-more-translucent) !important;
+        backdrop-filter: var(--tweak-blur);
     }
 
     /* ----- !CONTEXT MENUS ----- */
