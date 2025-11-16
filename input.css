@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-11-13.a
+@version        2025-11-15
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -75,7 +75,7 @@ Section headings (use Cmd-F to navigate)
 !IMAGES & VIDEO
 !NOTIFICATIONS
 !PROFILE
-!MESSAGES
+!CHATS
 !SETTINGS
 */
 
@@ -170,15 +170,16 @@ Section headings (use Cmd-F to navigate)
         background-color: var(--tweak-fg-more-translucent);
     }
 
-    /* override inline colors in light mode */
+    /* common colors in light mode */
+    /* TODO combine these blocks to avoid duplicate selectors */
     :where(:root.theme--light) {
         /* nav item and hovered tab background */
         :is(a, div[role="tab"])[style*="background-color: rgb(249, 250, 251)"] {
             background-color: var(--tweak-bg-tertiary) !important;
         }
         
-        /* active tab indicator */
-        div[role="tab"] div[style*="background-color: rgb(0, 106, 255)"] {
+        /* active tab indicator and unread chat badge */
+        div[style*="background-color: rgb(0, 106, 255)"] {
             background-color: var(--tweak-accent) !important;
         }
         
@@ -199,8 +200,7 @@ Section headings (use Cmd-F to navigate)
 
         :is(
             /* link text */
-            a,
-            span,
+            a, span,
             /* ex. language button on post composer */
             button > div
         )[style*="color: rgb(0, 106, 255)"] {
@@ -208,19 +208,23 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* top bar icons */
-        path[fill="#526580"] {
+        path[fill="#526580"],
+        /* carets and various other SVGs */
+        path[fill="#405168"],
+        /* post composer buttons */
+        path[fill="#006AFF"] {
             fill: var(--tweak-fg) !important;
         }
     }
 
-    /* override inline colors in dark mode */
+    /* common colors in dark mode */
     :where(:root.theme--dim) {
         /* nav item and hovered tab background */
         :is(a, div[role="tab"])[style*="background-color: rgb(28, 39, 54)"] {
             background-color: var(--tweak-bg-tertiary) !important;
         }
 
-        /* active tab indicator */
+        /* active tab indicator and unread chat badge */
         div[style*="background-color: rgb(15, 115, 255)"] {
             background-color: var(--tweak-accent) !important;
         }
@@ -240,13 +244,21 @@ Section headings (use Cmd-F to navigate)
             color: var(--tweak-fg-translucent) !important;
         }
 
-        /* link text */
-        :is(a, span)[style*="color: rgb(15, 115, 255)"] {
+        :is(
+            /* link text */
+            a, span,
+            /* ex. language button on post composer */
+            button > div
+        )[style*="color: rgb(15, 115, 255)"] {
             color: var(--tweak-accent) !important;
         }
 
         /* top bar icons */
-        path[fill="#8D9DB4"] {
+        path[fill="#8D9DB4"],
+        /* carets and various other SVGs */
+        path[fill="#ABB8C9"],
+        /* post composer buttons */
+        path[fill="#0F73FF"] {
             fill: var(--tweak-fg) !important;
         }
     }
@@ -276,31 +288,11 @@ Section headings (use Cmd-F to navigate)
         resize: vertical !important;
     }
 
-    /* reply settings hover and selected */
-    /* FIXME move to post composer section and fix */
-    div[aria-label="Edit post interaction settings"] :is(
-        button[aria-checked="true"] > div,
-        :root.theme--light div[style*="background-color: rgb(212, 219, 226)"],
-        :root.theme--dim div[style*="background-color: rgb(46, 64, 82)"]
-    ) {
-        background: var(--tweak-accent) !important;
-
-        > div {
-            color: var(--tweak-bg) !important;
-        }
-
-        path {
-            fill: var(--tweak-bg) !important;
-        }
-    }
-
     /* TODO style dangerous buttons */
     
     /* blue roundrect buttons */
-    button:is(
-        :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
-        :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"]
-    ) {
+    :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
+    :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"] {
         background-color: var(--tweak-fg) !important;
         
         div {
@@ -312,10 +304,8 @@ Section headings (use Cmd-F to navigate)
         }
     }
     /* blue roundrect button hover */
-    button:is(
-        :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
-        :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"]
-    ) {
+    :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
+    :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"] {
         background-color: var(--tweak-accent) !important;
         
         div {
@@ -335,6 +325,31 @@ Section headings (use Cmd-F to navigate)
         > div {
             color: var(--tweak-bg) !important;
         }
+    }
+    
+    /* white/black buttons */
+    /* :not(:hover) is because non-hovered profile buttons are the same color as hovered top bar buttons */
+    /* top bar buttons and post composer Cancel button */
+    :root.theme--light :is(a, button)[style*="background-color: rgb(255, 255, 255)"]:not(:hover),
+    :root.theme--dim :is(a, button)[style*="background-color: rgb(21, 29, 40)"]:not(:hover),
+    /* profile buttons */ 
+    :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"]:not(:hover),
+    :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"]:not(:hover) {
+        background-color: var(--tweak-bg-secondary) !important;
+        
+        /* icon-only buttons */
+        &:has(svg) {
+            background-color: transparent !important;
+        }
+    }
+    /* white/black buttons hover */
+    /* top bar buttons (Cancel button in post composer section) */
+    :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
+    :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
+    /* profile buttons */
+    :root.theme--light :is(a, button)[style*="background-color: rgb(220, 226, 234)"],
+    :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"] {
+        background-color: var(--tweak-bg-tertiary) !important;
     }
 
     /* on/off switches */
@@ -417,7 +432,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* notification badge */
-    div[aria-label*="unread items"] {
+    a[href="/notifications"] div[aria-label*="unread item"] {
         background-color: var(--tweak-accent) !important;
         color: var(--tweak-bg) !important;
     }
@@ -440,14 +455,8 @@ Section headings (use Cmd-F to navigate)
         @media (prefers-reduced-transparency: reduce) {
             -webkit-backdrop-filter: none !important;
             backdrop-filter: none !important;
-            background: var(--tweak-bg-secondary) !important;
+            background: var(--tweak-bg) !important;
         }
-    }
-
-    /* remove backgrounds on top bar items */
-    button[aria-label="Open drawer menu"],
-    a[data-testid="viewHeaderHomeFeedPrefsBtn"] {
-        background: transparent !important;
     }
     
     /* nav bar icons for all layouts */
@@ -463,9 +472,6 @@ Section headings (use Cmd-F to navigate)
     nav.r-1p0dtai {
         box-shadow: var(--tweak-shadow);
     }
-    
-    /* tablet/desktop nav icons */
-    
 
     /* hamburger menu drawer */
     div[data-testid='drawer'] {
@@ -575,7 +581,6 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* desktop compose button */
-    /* TODO use these styles for other blue buttons */
     button[aria-label="Compose new post"] {
         background: var(--tweak-accent) !important;
 
@@ -619,13 +624,34 @@ Section headings (use Cmd-F to navigate)
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
-    ) a[target="_blank"],
+    ) a[target="_blank"][aria-label],
     /* URL cards in post composer */
     div[data-testid="composePostView"] div:has(
         > div > button[aria-label="Remove attachment"]
     ),
     /* content warnings */
-    button[aria-label="Adult Content"] > div {
+    button:is(
+        [aria-label="Adult Content"],
+        [aria-label="Sexually Suggestive"],
+        [aria-label="Non-sexual Nudity"],
+        [aria-label="Sexually Suggestive (Cartoon)"],
+        [aria-label="Graphic Media"],
+        [aria-label="Self-Harm"],
+        [aria-label="Sensitive"],
+        [aria-label="Extremist"],
+        [aria-label="Intolerance"],
+        [aria-label="Threats"],
+        [aria-label="Rude"],
+        [aria-label="Illicit"],
+        [aria-label="Security Concerns"],
+        [aria-label="Unsafe link"],
+        [aria-label="Misinformation"],
+        [aria-label="Scam"],
+        [aria-label="Engagement Farming"],
+        [aria-label="Spam"],
+        [aria-label="Misleading"],
+        [aria-label="Inauthentic Account"],
+    ) > div {
         transition: background 125ms;
         border-width: 1px !important;
         border-radius: var(--tweak-radius);
@@ -656,7 +682,7 @@ Section headings (use Cmd-F to navigate)
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
-    ) a[target="_blank"] {
+    ) a[target="_blank"][aria-label] {
         margin-top: 8px;
     }
 
@@ -678,6 +704,15 @@ Section headings (use Cmd-F to navigate)
         /* icons */
         path {
             fill: var(--tweak-fg-translucent) !important;
+        }
+    }
+    
+    /* back button */
+    div[data-testid="postThreadScreen"] button[aria-label="Go back"] {
+        background-color: transparent !important;
+
+        &:hover {
+            background-color: var(--tweak-bg-tertiary) !important;
         }
     }
     
@@ -757,7 +792,7 @@ Section headings (use Cmd-F to navigate)
         background: var(--tweak-bg-translucent) !important;
 
         @media (prefers-reduced-transparency: reduce) {
-                -webkit-backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             backdrop-filter: none;
             background: var(--tweak-bg) !important;
         }
@@ -806,7 +841,7 @@ Section headings (use Cmd-F to navigate)
         }
         
         svg path {
-            fill: currentColor !important; /* TEST */
+            fill: currentColor !important;
         }
     }
 
@@ -906,18 +941,50 @@ Section headings (use Cmd-F to navigate)
     /* ----- !POST COMPOSER ----- */
 
     /* vertically center */
-    div:has(> div > div[data-testid='composePostView']) {
+    div[role="dialog"]:has(> div > div[data-testid='composePostView']) {
         justify-content: center;
     }
 
-    /* consistent padding */
-    div[data-testid='composePostView'] > div {
-        padding-top: 0 !important;
-    }
-
     /* Cancel button */
-    div[data-testid="composePostView"] button[aria-label="Cancel"] > div {
-        color: var(--tweak-accent) !important;
+    div[data-testid="composePostView"] button[aria-label="Cancel"] {
+        background-color: var(--tweak-bg-secondary) !important;
+
+        &:hover {
+            background-color: var(--tweak-bg-tertiary) !important;
+        }
+
+        div {
+            color: var(--tweak-fg) !important;   
+        }
+    }
+    
+    /* Post button */
+    div[data-testid="composePostView"] button[data-testid="composerPublishBtn"][style] {
+        background-color: var(--tweak-accent) !important;
+
+        div {
+            color: var(--tweak-bg) !important;
+        }
+        
+        &:hover {
+            box-shadow: var(--tweak-shadow);
+        }
+        
+        &[disabled] {
+            background-color: var(--tweak-bg-secondary) !important;
+            
+            div {
+                color: var(--tweak-fg-more-translucent) !important;
+            }
+        }
+    }
+    
+    /* attachment button hover */
+    div[data-testid="composePostView"] :is(
+        :root.theme--light button[style*="background-color: rgb(204, 225, 255)"],
+        :root.theme--dim button[style*="background-color: rgb(18, 52, 100)"]
+    ) {
+        background-color: var(--tweak-bg-tertiary) !important;
     }
 
     /* exclamation point for missing alt text */
@@ -930,29 +997,6 @@ Section headings (use Cmd-F to navigate)
     textarea[aria-label="Alt text"] {
         color: var(--tweak-fg);
         text-transform: none !important;
-    }
-
-    /* post attachment/option buttons */
-    button:is(
-        [data-testid="openMediaBtn"],
-        [data-testid="openGifBtn"],
-        [aria-label="Add another post to thread"],
-        [aria-label="Post language selection"]
-    ) {
-        border-radius: 9999px !important;
-        background-color: transparent !important;
-        
-        &:hover {
-            background-color: var(--tweak-bg-tertiary) !important;
-        }
-        
-        div {
-            color: var(--tweak-fg) !important;
-        }
-        
-        path {
-            fill: var(--tweak-fg) !important;   
-        }
     }
 
     /* character count circle */
@@ -1005,7 +1049,29 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
+    /* FIXME reply settings hover and selected */
+    div[aria-label="Edit post interaction settings"] :is(
+        button[aria-checked="true"] > div,
+        :root.theme--light div[style*="background-color: rgb(212, 219, 226)"],
+        :root.theme--dim div[style*="background-color: rgb(46, 64, 82)"]
+    ) {
+        background: var(--tweak-accent) !important;
+
+        > div {
+            color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
     /* ----- !IMAGES & VIDEO ----- */
+    
+    /* image background */
+    div[data-expoimage="true"] img {
+        background-color: var(--tweak-bg-secondary);
+    }
 
     /* alt text indicator */
     :is(
@@ -1125,18 +1191,12 @@ Section headings (use Cmd-F to navigate)
         /* notification spacing */
         & > div[style^="width: 100%;"] > div > div {
             margin: 8px 8px 0 !important;
-            border-radius: 8px;
+            border-radius: var(--tweak-radius);
             overflow: hidden;
         }
 
-        /* round notification corners */
-        div[style*='background-color:'] {
-            border-radius: var(--tweak-radius);
-        }
-
         /* highlight new notifications */
-        :root.theme--light a[style*='background-color: rgb(245, 249, 255)'],
-        :root.theme--dim a[style*='background-color: rgb(18, 33, 54)'] {
+        a[data-testid^="feedItem-by-"][style*="background-color"] {
             background: var(--tweak-accent-more-translucent) !important;
         }
         
@@ -1151,7 +1211,7 @@ Section headings (use Cmd-F to navigate)
             cursor: default !important;
         }
         /* restore on images */
-        [data-expoimage="true"], [data-expoimage="true"] ~ * {
+        [data-expoimage="true"] {
             cursor: pointer;
         }
     }
@@ -1190,7 +1250,19 @@ Section headings (use Cmd-F to navigate)
         border-radius: var(--tweak-radius);
     }
 
-    /* ----- !MESSAGES ----- */
+    /* ----- !CHATS ----- */
+    
+    /* chat requests banner */
+    a[aria-label="Chat request inbox"] {
+        background-color: var(--tweak-bg-tertiary) !important;
+        border-radius: var(--tweak-radius) !important;
+    }
+    
+    /* chat requests */
+    div[data-testid="messagesInboxScreen"] a[href^="/messages/"] > div {
+        background-color: transparent !important;
+        cursor: default;
+    }
     
     /* incoming messsage bubbles */
     div[data-testid="convoScreen"] div[style*="align-self: flex-start"]:has(> div[data-word-wrap="1"]) {
@@ -1243,20 +1315,21 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* ----- !SETTINGS ----- */
+    /* FIXME all of this is broken probably */
 
-    /* FIXME settings chevrons */
+    /* settings chevrons */
     :root.theme--light path[fill="hsl(211, 20%, 53%)"],
     :root.theme--dim path[fill="hsl(211, 20%, 56%)"] {
         fill: var(--tweak-fg) !important;
     }
 
-    /* FIXME email address */
+    /* email address */
     :root.theme--light div[style*="color: rgb(140, 158, 178)"],
     :root.theme--dim div[style*="color: rgb(91, 119, 149)"] {
         color: var(--tweak-accent) !important;
     }
 
-    /* FIXME "Sign in" text */
+    /* "Sign in" text */
     div[data-testid="noSessionView"] div:is(
         :root.theme--light div[style*="color: rgb(16, 131, 254)"],
         :root.theme--dim div[style*="color: rgb(32, 139, 254)"]
@@ -1264,7 +1337,7 @@ Section headings (use Cmd-F to navigate)
         color: var(--tweak-accent) !important;
     }
 
-    /* FIXME muted words circles */
+    /* muted words circles */
     div[aria-label="Manage your muted words and tags"] {
         /* outer circles */
         div:is(
