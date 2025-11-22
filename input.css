@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-11-15
+@version        2025-11-21
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -111,6 +111,7 @@ Section headings (use Cmd-F to navigate)
         --tweak-bg-translucent: color-mix(in srgb, var(--tweak-bg) 75%, transparent);
         --tweak-fg-translucent: color-mix(in srgb, var(--tweak-fg) 75%, transparent);
         --tweak-fg-more-translucent: color-mix(in srgb, var(--tweak-fg) 25%, transparent);
+        --tweak-accent-darker: color-mix(in srgb, var(--tweak-accent) 90%, black);
         --tweak-accent-translucent: color-mix(in srgb, var(--tweak-accent) 50%, transparent);
         --tweak-accent-more-translucent: color-mix(in srgb, var(--tweak-accent) 25%, transparent);
 
@@ -294,6 +295,7 @@ Section headings (use Cmd-F to navigate)
     :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
     :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"] {
         background-color: var(--tweak-fg) !important;
+        transition: transform 0.1s ease;
         
         div {
             color: var(--tweak-bg) !important;
@@ -307,6 +309,11 @@ Section headings (use Cmd-F to navigate)
     :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
     :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"] {
         background-color: var(--tweak-accent) !important;
+        transition: transform 0.1s ease;
+        
+        &:active {
+            transform: scale(0.9);
+        }
         
         div {
             color: var(--tweak-bg) !important;
@@ -321,7 +328,17 @@ Section headings (use Cmd-F to navigate)
     /* buttons with gradient backgrounds (ex. compose FAB) */
     div[style*="background-image: linear-gradient"][style*="rgb(90, 113, 250)"] {
         background: var(--tweak-accent) !important;
-
+        transition: transform 0.1s ease;
+        
+        &:hover, &:active {
+            background: var(--tweak-accent-darker) !important;
+        }
+        
+        /* make the press animation more prominent */
+        &:active {
+            transform: scale(0.9);
+        }
+        
         > div {
             color: var(--tweak-bg) !important;
         }
@@ -336,6 +353,11 @@ Section headings (use Cmd-F to navigate)
     :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"]:not(:hover),
     :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"]:not(:hover) {
         background-color: var(--tweak-bg-secondary) !important;
+        transition: transform 0.1s ease;
+        
+        &:active {
+            transform: scale(0.9);
+        }
         
         /* icon-only buttons */
         &:has(svg) {
@@ -343,13 +365,18 @@ Section headings (use Cmd-F to navigate)
         }
     }
     /* white/black buttons hover */
-    /* top bar buttons (Cancel button in post composer section) */
+    /* top bar buttons (Cancel button is in post composer section) */
     :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
     :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
     /* profile buttons */
     :root.theme--light :is(a, button)[style*="background-color: rgb(220, 226, 234)"],
     :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"] {
         background-color: var(--tweak-bg-tertiary) !important;
+        transition: transform 0.1s ease;
+        
+        &:active {
+            transform: scale(0.9);
+        }
     }
 
     /* on/off switches */
@@ -948,9 +975,14 @@ Section headings (use Cmd-F to navigate)
     /* Cancel button */
     div[data-testid="composePostView"] button[aria-label="Cancel"] {
         background-color: var(--tweak-bg-secondary) !important;
+        transition: transform 0.1s ease;
 
         &:hover {
             background-color: var(--tweak-bg-tertiary) !important;
+        }
+        
+        &:active {
+            transform: scale(0.9);
         }
 
         div {
@@ -967,7 +999,7 @@ Section headings (use Cmd-F to navigate)
         }
         
         &:hover {
-            box-shadow: var(--tweak-shadow);
+            background-color: var(--tweak-accent-darker) !important;
         }
         
         &[disabled] {
@@ -1019,17 +1051,17 @@ Section headings (use Cmd-F to navigate)
     .tippy-box .items {
         box-shadow: var(--tweak-shadow);
         border-radius: var(--tweak-radius);
+        overflow: hidden;
         
         :root.theme--dim & {
             border-width: 1px !important;
         }
         
-        > div {
-            border-radius: var(--tweak-radius);
-        }
-        
         button {
-            &[style*="background-color"] {
+            background-color: transparent;
+            border-radius: 8px !important;
+
+            &[style*="background-color:"] {
                 background-color: var(--tweak-accent) !important;
                 
                 div[style*="color"] {
@@ -1196,7 +1228,8 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* highlight new notifications */
-        a[data-testid^="feedItem-by-"][style*="background-color"] {
+        a[data-testid^="feedItem-by-"][style*="background-color"],
+        div[data-testid^="feedItem-by-"] > div[style*="background-color"] {
             background: var(--tweak-accent-more-translucent) !important;
         }
         
@@ -1252,10 +1285,29 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !CHATS ----- */
     
-    /* chat requests banner */
+    /* new chat button */
+    div[data-testid="messagesScreen"] a[aria-label="Chat settings"] + button[aria-label="New chat"] {
+        background-color: var(--tweak-accent) !important;
+        
+        &:hover, &:active {
+            background-color: var(--tweak-accent-darker) !important;
+        }
+    }
+    
+    /* chats */
+    div[data-testid="messagesScreen"] a[href^="/messages/"] {
+        cursor: default;
+        
+        > div[style*="background-color:"] {
+            background-color: transparent !important;
+        }
+    }
+    
+    /* chat request banner */
     a[aria-label="Chat request inbox"] {
         background-color: var(--tweak-bg-tertiary) !important;
         border-radius: var(--tweak-radius) !important;
+        cursor: pointer !important;
     }
     
     /* chat requests */
@@ -1264,7 +1316,7 @@ Section headings (use Cmd-F to navigate)
         cursor: default;
     }
     
-    /* incoming messsage bubbles */
+    /* incoming message bubbles */
     div[data-testid="convoScreen"] div[style*="align-self: flex-start"]:has(> div[data-word-wrap="1"]) {
         background-color: var(--tweak-fg) !important;
 
