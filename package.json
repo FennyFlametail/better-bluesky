@@ -2,6 +2,9 @@
   "name": "postcss",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "build": "bun run index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
