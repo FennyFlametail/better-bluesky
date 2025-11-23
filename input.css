@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-11-21
+@version        2025-11-22.a
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -179,7 +179,7 @@ Section headings (use Cmd-F to navigate)
             background-color: var(--tweak-bg-tertiary) !important;
         }
         
-        /* active tab indicator and unread chat badge */
+        /* active tab indicator and tablet/desktop unread chat badge */
         div[style*="background-color: rgb(0, 106, 255)"] {
             background-color: var(--tweak-accent) !important;
         }
@@ -225,7 +225,7 @@ Section headings (use Cmd-F to navigate)
             background-color: var(--tweak-bg-tertiary) !important;
         }
 
-        /* active tab indicator and unread chat badge */
+        /* active tab indicator and tablet/desktop unread chat badge */
         div[style*="background-color: rgb(15, 115, 255)"] {
             background-color: var(--tweak-accent) !important;
         }
@@ -459,9 +459,13 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* notification badge */
-    a[href="/notifications"] div[aria-label*="unread item"] {
+    :is(a, div)[aria-label="Notifications"] div[aria-label*="unread item"] {
         background-color: var(--tweak-accent) !important;
         color: var(--tweak-bg) !important;
+
+        div {
+            color: var(--tweak-bg) !important;
+        }
     }
 
     /* ----- !LAYOUT ----- */
@@ -498,6 +502,11 @@ Section headings (use Cmd-F to navigate)
     /* mobile nav bar */
     nav.r-1p0dtai {
         box-shadow: var(--tweak-shadow);
+    }
+    
+    /* mobile unread chat badge */
+    div.r-wzwllv {
+        background-color: var(--tweak-accent) !important;
     }
 
     /* hamburger menu drawer */
@@ -584,6 +593,11 @@ Section headings (use Cmd-F to navigate)
             border-width: 1px !important;
         }
         
+        div[style*="opacity: 0.45"] {
+            opacity: 1 !important;
+            background-color: var(--tweak-bg-secondary) !important;
+        }
+        
         path {
             fill: var(--tweak-fg);
         }
@@ -608,8 +622,12 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* desktop compose button */
-    button[aria-label="Compose new post"] {
+    button[aria-label="Compose new post"][class][style] {
         background: var(--tweak-accent) !important;
+        
+        &:hover, &:active {
+            background: var(--tweak-accent-darker) !important;
+        }
 
         div {
             color: var(--tweak-bg) !important;      
@@ -724,7 +742,11 @@ Section headings (use Cmd-F to navigate)
         }
         
         /* hover */
-        button:not([style*="background-color: rgba(0, 0, 0, 0)"]) {
+        button:not(
+            div[aria-label="Embedded video player"] button
+        ):not(
+            [style*="background-color: rgba(0, 0, 0, 0)"]
+        ) {
             background-color: var(--tweak-bg-secondary) !important;
         }
         
@@ -1029,6 +1051,13 @@ Section headings (use Cmd-F to navigate)
     textarea[aria-label="Alt text"] {
         color: var(--tweak-fg);
         text-transform: none !important;
+    }
+    
+    /* links */
+    .ProseMirror .autolink,
+    /* usernames */
+    .ProseMirror .mention {
+        color: var(--tweak-accent);
     }
 
     /* character count circle */
