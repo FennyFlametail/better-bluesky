@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-11-22.a
+@version        2025-11-27
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @license        MIT
@@ -118,6 +118,8 @@ Section headings (use Cmd-F to navigate)
         --tweak-radius: 14px;
         --tweak-blur: blur(30px);
         --tweak-shadow: rgba(0, 0, 0, 0.3) 0px 5px 20px;
+        --tweak-transition-properties: background, border-color;
+        --tweak-transition-timing: 100ms ease;
 
         --background: var(--tweak-bg) !important;
         --backgroundLight: var(--tweak-bg) !important;
@@ -147,6 +149,8 @@ Section headings (use Cmd-F to navigate)
 
     * {
         border: 0px solid var(--tweak-fg-more-translucent) !important;
+        transition: var(--tweak-transition-timing);
+        transition-property: var(--tweak-transition-properties);
         text-decoration-color: currentColor !important;
         -webkit-font-smoothing: auto;
     }
@@ -174,9 +178,9 @@ Section headings (use Cmd-F to navigate)
     /* common colors in light mode */
     /* TODO combine these blocks to avoid duplicate selectors */
     :where(:root.theme--light) {
-        /* nav item and hovered tab background */
-        :is(a, div[role="tab"])[style*="background-color: rgb(249, 250, 251)"] {
-            background-color: var(--tweak-bg-tertiary) !important;
+        /* nav item, hovered tab, hovered hamburger menu item background */
+        [style*="background-color: rgb(249, 250, 251)"] {
+            background-color: var(--tweak-bg-secondary) !important;
         }
         
         /* active tab indicator and tablet/desktop unread chat badge */
@@ -195,7 +199,9 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* secondary dimmed text */
-        [style*="color: rgb(64, 81, 104)"] {
+        [style*="color: rgb(64, 81, 104)"],
+        /* reply post and content warning Show text */
+        [style*="color: rgb(35, 46, 62)"] {
             color: var(--tweak-fg-translucent) !important;
         }
 
@@ -220,9 +226,9 @@ Section headings (use Cmd-F to navigate)
 
     /* common colors in dark mode */
     :where(:root.theme--dim) {
-        /* nav item and hovered tab background */
-        :is(a, div[role="tab"])[style*="background-color: rgb(28, 39, 54)"] {
-            background-color: var(--tweak-bg-tertiary) !important;
+        /* nav item, hovered tab, hovered hamburger menu item background */
+        [style*="background-color: rgb(28, 39, 54)"] {
+            background-color: var(--tweak-bg-secondary) !important;
         }
 
         /* active tab indicator and tablet/desktop unread chat badge */
@@ -241,7 +247,9 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* secondary dimmed text */
-        [style*="color: rgb(171, 184, 201)"] {
+        [style*="color: rgb(171, 184, 201)"],
+        /* reply post and content warning Show text */
+        [style*="color: rgb(226, 231, 238)"] {
             color: var(--tweak-fg-translucent) !important;
         }
 
@@ -295,7 +303,7 @@ Section headings (use Cmd-F to navigate)
     :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
     :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"] {
         background-color: var(--tweak-fg) !important;
-        transition: transform 0.1s ease;
+        transition-property: var(--tweak-transition-properties), transform;
         
         div {
             color: var(--tweak-bg) !important;
@@ -309,7 +317,7 @@ Section headings (use Cmd-F to navigate)
     :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
     :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"] {
         background-color: var(--tweak-accent) !important;
-        transition: transform 0.1s ease;
+        transition-property: var(--tweak-transition-properties), transform;
         
         &:active {
             transform: scale(0.9);
@@ -328,7 +336,7 @@ Section headings (use Cmd-F to navigate)
     /* buttons with gradient backgrounds (ex. compose FAB) */
     div[style*="background-image: linear-gradient"][style*="rgb(90, 113, 250)"] {
         background: var(--tweak-accent) !important;
-        transition: transform 0.1s ease;
+        transition-property: var(--tweak-transition-properties), transform;
         
         &:hover, &:active {
             background: var(--tweak-accent-darker) !important;
@@ -353,7 +361,7 @@ Section headings (use Cmd-F to navigate)
     :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"]:not(:hover),
     :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"]:not(:hover) {
         background-color: var(--tweak-bg-secondary) !important;
-        transition: transform 0.1s ease;
+        transition-property: var(--tweak-transition-properties), transform;
         
         &:active {
             transform: scale(0.9);
@@ -371,8 +379,8 @@ Section headings (use Cmd-F to navigate)
     /* profile buttons */
     :root.theme--light :is(a, button)[style*="background-color: rgb(220, 226, 234)"],
     :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"] {
-        background-color: var(--tweak-bg-tertiary) !important;
-        transition: transform 0.1s ease;
+        background-color: var(--tweak-bg-secondary) !important;
+        transition-property: var(--tweak-transition-properties), transform;
         
         &:active {
             transform: scale(0.9);
@@ -566,7 +574,6 @@ Section headings (use Cmd-F to navigate)
 
     /* feed, profile, list tab */
     div[role="tab"] {
-        transition: background 125ms;
         margin-inline: 3.5px;
         border-radius: var(--tweak-radius);
         background-clip: padding-box;
@@ -584,18 +591,19 @@ Section headings (use Cmd-F to navigate)
     /* scroll to top button */
     button[aria-label='Load new posts'],
     button[aria-label='Load new notifications'] {
-        -webkit-backdrop-filter: var(--tweak-blur);
-        backdrop-filter: var(--tweak-blur);
         box-shadow: var(--tweak-shadow);
-        background: var(--tweak-bg-translucent) !important;
+        background: var(--tweak-bg) !important;
 
         :root.theme--dim & {
             border-width: 1px !important;
         }
         
-        div[style*="opacity: 0.45"] {
-            opacity: 1 !important;
-            background-color: var(--tweak-bg-secondary) !important;
+        &:hover {
+            background: var(--tweak-bg-secondary) !important;
+        }
+        
+        > div:first-child {
+            display: none;
         }
         
         path {
@@ -696,8 +704,8 @@ Section headings (use Cmd-F to navigate)
         [aria-label="Spam"],
         [aria-label="Misleading"],
         [aria-label="Inauthentic Account"],
+        [aria-label="Post Hidden by Muted Word"]
     ) > div {
-        transition: background 125ms;
         border-width: 1px !important;
         border-radius: var(--tweak-radius);
         background: transparent !important;
@@ -737,7 +745,8 @@ Section headings (use Cmd-F to navigate)
     div[data-testid="postThreadScreen"] div[data-testid^="postThreadItem-by"] > div:last-child > div:last-child,
     /* reply notification actions */
     div[data-testid="notifsFeed"] div[data-testid^='feedItem-'] div:last-child[style*="justify-content: space-between;"] {
-        div {
+        svg + div,
+        div:has(> svg) + div div {
             color: var(--tweak-fg-translucent) !important;   
         }
         
@@ -761,7 +770,7 @@ Section headings (use Cmd-F to navigate)
         background-color: transparent !important;
 
         &:hover {
-            background-color: var(--tweak-bg-tertiary) !important;
+            background-color: var(--tweak-bg-secondary) !important;
         }
     }
     
@@ -997,10 +1006,10 @@ Section headings (use Cmd-F to navigate)
     /* Cancel button */
     div[data-testid="composePostView"] button[aria-label="Cancel"] {
         background-color: var(--tweak-bg-secondary) !important;
-        transition: transform 0.1s ease;
+        transition-property: var(--tweak-transition-properties), transform;
 
         &:hover {
-            background-color: var(--tweak-bg-tertiary) !important;
+            background-color: var(--tweak-bg-secondary) !important;
         }
         
         &:active {
@@ -1038,7 +1047,7 @@ Section headings (use Cmd-F to navigate)
         :root.theme--light button[style*="background-color: rgb(204, 225, 255)"],
         :root.theme--dim button[style*="background-color: rgb(18, 52, 100)"]
     ) {
-        background-color: var(--tweak-bg-tertiary) !important;
+        background-color: var(--tweak-bg-secondary) !important;
     }
 
     /* exclamation point for missing alt text */
@@ -1154,13 +1163,17 @@ Section headings (use Cmd-F to navigate)
         opacity: 0.5;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
-        transition: opacity 125ms !important;
+        transition-property: background, opacity !important;
         background: var(--tweak-bg-tertiary);
+        
+        path {
+            fill: var(--tweak-fg);
+        }
 
         @media (hover: hover) {
             opacity: 0;
 
-            div:has([aria-label="Close image viewer"]):hover & {
+            div:has(> button[aria-label="Close image viewer"]):hover & {
                 opacity: 0.5;
 
                 &:hover {
@@ -1175,17 +1188,10 @@ Section headings (use Cmd-F to navigate)
         right: auto !important;
         left: 10px;
     }
-
-    /* image viewer button glyphs */
-    button[aria-label="Close image"] path {
-        fill: var(--tweak-fg);
-    }
-
-    button[aria-label='Previous image'] path,
-    button[aria-label='Next image'] path {
-        transform: scale(0.75);
-        transform-origin: center;
-        fill: var(--tweak-fg);
+    
+    /* remove transition from images */
+    button[aria-label="Close image viewer"] div:has(+ img) {
+        transition: none !important;
     }
 
     /* alt text */
@@ -1334,7 +1340,7 @@ Section headings (use Cmd-F to navigate)
     
     /* chat request banner */
     a[aria-label="Chat request inbox"] {
-        background-color: var(--tweak-bg-tertiary) !important;
+        background-color: var(--tweak-bg-secondary) !important;
         border-radius: var(--tweak-radius) !important;
         cursor: pointer !important;
     }
