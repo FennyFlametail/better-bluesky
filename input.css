@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-12-16
+@version        2025-12-26
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -390,32 +390,27 @@ Section headings (use Cmd-F to navigate)
             color: var(--tweak-bg) !important;
         }
     }
-
-    /* white/black buttons */
-    /* :not(:hover) is because non-hovered profile buttons are the same color as hovered top bar buttons */
+    
+    /* white/black bg buttons */
+    /* :not(:hover) is because non-hovered pill buttons are the same color as hovered top bar buttons */
     /* top bar buttons */
     :root.theme--light :is(a, button)[style*="background-color: rgb(255, 255, 255)"]:not(:hover),
     :root.theme--dim :is(a, button)[style*="background-color: rgb(21, 29, 40)"]:not(:hover),
-    /* profile buttons */
+    /* pill buttons (profile, etc) */
     :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"]:not(:hover),
     :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"]:not(:hover) {
-        background-color: var(--tweak-bg-secondary) !important;
+        background-color: transparent !important;
         transition-property: var(--tweak-transition-properties), transform;
 
         &:active {
             transform: scale(0.9);
         }
-
-        /* icon-only buttons */
-        &:has(svg):not(:has(div)) {
-            background-color: transparent !important;
-        }
     }
-    /* white/black buttons hover */
+    /* white/black bg buttons hover */
     /* top bar buttons */
     :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
     :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
-    /* profile buttons */
+    /* pill buttons */
     :root.theme--light :is(a, button)[style*="background-color: rgb(220, 226, 234)"],
     :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"] {
         background-color: var(--tweak-bg-secondary) !important;
@@ -1249,13 +1244,15 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* scrubber */
-        div[data-testid="scrubber"] {
-            div[style*="background-color: rgb(255, 255, 255)"] {
-                background-color: var(--contrast-color) !important;
+        div[data-testid="scrubber"] > div > div:first-child {
+            background-color: color-mix(in srgb, var(--contrast-color) 40%, transparent);
+            
+            > div {
+                background-color: var(--contrast-color);
             }
-            div[style*="background-color: rgba(255, 255, 255, 0.4)"] {
-                background-color: var(--contrast-color) !important;
-            }
+        }
+        div[role="slider"] > div[style*="transform: scale(0.6)"] {
+            transform: scale(1) !important;
         }
 
         /* volume slider */
@@ -1359,9 +1356,10 @@ Section headings (use Cmd-F to navigate)
             }
         }
 
-        /* chat request banner */
+        /* chat requests banner */
         a[aria-label="Chat request inbox"] {
             background-color: var(--tweak-bg-secondary) !important;
+            border-radius: var(--tweak-radius) !important;
             cursor: pointer !important;
         }
     }
