@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-12-31.a
+@version        2025-12-31.b
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -1141,7 +1141,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* remove transition from images */
-    button[aria-label="Close image viewer"] > div.r-1pi2tsx:has(+ img) {
+    button[aria-label="Close image viewer"] div.r-1pi2tsx:has(+ img) {
         transition: none !important;
     }
 
