@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-12-28
+@version        2025-12-30
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -19,6 +19,11 @@
   "none:None": "revert",
   "lowercase:lowercase": "lowercase",
   "uppercase:UPPERCASE": "uppercase"
+}
+@var select tweak-option-count-display "Show reply/repost/like counts" {
+  "yes:Yes": "flex",
+  "hover:On hover (Chrome/Safari only)": "--on-hover",
+  "no:No": "none"
 }
 @var select tweak-option-disable-text-outlines "Disable focus outlines on text fields" {
   "yes:Yes": "none",
@@ -51,6 +56,7 @@
     --tweak-option-font: 'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui;
     --tweak-option-line-height: 1.3;
     --tweak-option-text-transform: revert;
+    --tweak-option-count-display: flex;
     --tweak-option-disable-text-outlines: none;
     --tweak-option-small-link-previews: no;
 
@@ -85,7 +91,7 @@ Section headings (use Cmd-F to navigate)
 @-moz-document domain("bsky.app") {
     @keyframes fade-in {
         from {
-            opacity: 0; 
+            opacity: 0;
         }
         to {
             opacity: 1;
@@ -130,6 +136,10 @@ Section headings (use Cmd-F to navigate)
         --backgroundLight: var(--tweak-bg) !important;
         --text: var(--tweak-fg) !important;
         background-color: var(--tweak-bg) !important;
+        
+        &::selection {
+            background-color: var(--tweak-fg-more-translucent);
+        }
     }
 
     :root.theme--dim {
@@ -177,9 +187,6 @@ Section headings (use Cmd-F to navigate)
         line-height: var(--tweak-option-line-height, 1.3) !important;
         font-family: var( --tweak-option-font, 'Avenir Next', 'SF Pro Rounded', ui-rounded, system-ui) !important;
     }
-    *::selection {
-        background-color: var(--tweak-fg-more-translucent);
-    }
 
     path[fill] {
         fill: var(--tweak-fg) !important;
@@ -188,12 +195,16 @@ Section headings (use Cmd-F to navigate)
     /* common colors in light mode */
     :where(:root.theme--light) {
         /* nav item, hovered tab, hovered hamburger menu item background */
-        [style*="background-color: rgb(249, 250, 251)"] {
+        [style*="background-color: rgb(249, 250, 251)"],
+        /* loading skeletons */
+        div[style*="background-color: rgb(239, 242, 246)"] {
             background-color: var(--tweak-bg-secondary) !important;
         }
 
         /* active tab indicator and tablet/desktop unread chat badge */
-        div[style*="background-color: rgb(0, 106, 255)"] {
+        div[style*="background-color: rgb(0, 106, 255)"],
+        /* mobile chat badge */
+        .r-wzwllv {
             background-color: var(--tweak-accent) !important;
         }
 
@@ -203,7 +214,9 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* primary text */
-        [style*="color: rgb(0, 0, 0)"] {
+        [style*="color: rgb(0, 0, 0)"],
+        /* "View full thread" link */
+        div.css-146c3p1[style*="rgb(0, 106, 255)"] {
             color: var(--tweak-fg) !important;
         }
 
@@ -236,12 +249,16 @@ Section headings (use Cmd-F to navigate)
     /* common colors in dark mode */
     :where(:root.theme--dim) {
         /* nav item, hovered tab, hovered hamburger menu item background */
-        [style*="background-color: rgb(28, 39, 54)"] {
+        [style*="background-color: rgb(28, 39, 54)"],
+        /* loading skeletons */
+        div[style*="background-color: rgb(34, 46, 63)"] {
             background-color: var(--tweak-bg-secondary) !important;
         }
 
         /* active tab indicator and tablet/desktop unread chat badge */
-        div[style*="background-color: rgb(15, 115, 255)"] {
+        div[style*="background-color: rgb(15, 115, 255)"],
+        /* mobile chat badge */
+        .r-wzwllv {
             background-color: var(--tweak-accent) !important;
         }
 
@@ -251,7 +268,9 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* primary text */
-        [style*="color: rgb(255, 255, 255)"] {
+        [style*="color: rgb(255, 255, 255)"],
+        /* "View full thread" link and language picker button */
+        div.css-146c3p1[style*="rgb(15, 115, 255)"] {
             color: var(--tweak-fg) !important;
         }
 
@@ -270,7 +289,7 @@ Section headings (use Cmd-F to navigate)
         )[style*="color: rgb(15, 115, 255)"] {
             color: var(--tweak-accent) !important;
         }
-        
+
         /* destructive action text */
         [style*="color: rgb(235, 36, 82)"] {
             color: var(--tweak-danger) !important;
@@ -303,12 +322,15 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* blue roundrect buttons */
-    :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
-    :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"] {
+    :where(
+        :root.theme--light button[style*="background-color: rgb(0, 106, 255)"],
+        :root.theme--dim button[style*="background-color: rgb(15, 115, 255)"],
+        button[data-testid="followBtn"]
+     ) {
         background-color: var(--tweak-fg) !important;
         transition-property: var(--tweak-transition-properties), transform;
 
-        div {
+        div[dir="auto"] {
             color: var(--tweak-bg) !important;
         }
 
@@ -317,8 +339,11 @@ Section headings (use Cmd-F to navigate)
         }
     }
     /* blue roundrect button hover */
-    :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
-    :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"] {
+    :where(
+        :root.theme--light button[style*="background-color: rgb(0, 89, 214)"],
+        :root.theme--dim button[style*="background-color: rgb(77, 151, 255)"],
+        button[data-testid="followBtn"]:hover
+     ) {
         background-color: var(--tweak-accent) !important;
         transition-property: var(--tweak-transition-properties), transform;
 
@@ -326,7 +351,7 @@ Section headings (use Cmd-F to navigate)
             transform: scale(0.9);
         }
 
-        div {
+        div[dir="auto"] {
             color: var(--tweak-bg) !important;
         }
 
@@ -345,7 +370,7 @@ Section headings (use Cmd-F to navigate)
             transform: scale(0.9);
         }
 
-        div {
+        div[dir="auto"] {
             color: var(--tweak-bg) !important;
         }
 
@@ -363,7 +388,7 @@ Section headings (use Cmd-F to navigate)
             transform: scale(0.9);
         }
 
-        div {
+        div[dir="auto"] {
             color: var(--tweak-bg) !important;
         }
 
@@ -372,33 +397,46 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* buttons with gradient backgrounds (ex. compose FAB) */
-    div[style*="background-image: linear-gradient"][style*="rgb(90, 113, 250)"] {
-        background: var(--tweak-accent) !important;
-        transition-property: var(--tweak-transition-properties), transform;
+    /* accent colored buttons */
+    button[data-testid="composerPublishBtn"],
+    button[data-testid="editProfileSaveBtn"],
+    button[aria-label="Accept chat request"],
+    a[aria-label="Chat settings"] + button[aria-label="New chat"] {
+        background-color: var(--tweak-accent) !important;
 
-        &:hover, &:active {
-            background: var(--tweak-accent-darker) !important;
-        }
-
-        /* make the press animation more prominent */
-        &:active {
-            transform: scale(0.9);
-        }
-
-        > div {
+        > div.css-146c3p1 {
             color: var(--tweak-bg) !important;
         }
+
+        &:hover {
+            background-color: var(--tweak-accent-darker) !important;
+        }
+
+        &[disabled] {
+            background-color: var(--tweak-bg-secondary) !important;
+
+            > div.css-146c3p1 {
+                color: var(--tweak-fg-more-translucent) !important;
+            }
+        }
     }
-    
+
     /* white/black bg buttons */
     /* :not(:hover) is because non-hovered pill buttons are the same color as hovered top bar buttons */
-    /* top bar buttons */
-    :root.theme--light :is(a, button)[style*="background-color: rgb(255, 255, 255)"]:not(:hover),
-    :root.theme--dim :is(a, button)[style*="background-color: rgb(21, 29, 40)"]:not(:hover),
-    /* pill buttons (profile, etc) */
-    :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"]:not(:hover),
-    :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"]:not(:hover) {
+    :where(
+        /* top bar buttons */
+        :root.theme--light :is(a, button)[style*="background-color: rgb(255, 255, 255)"],
+        :root.theme--dim :is(a, button)[style*="background-color: rgb(21, 29, 40)"],
+        /* pill buttons (profile, etc) */
+        :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
+        :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
+        /* post composer cancel and attachment buttons */
+        button[aria-label="Cancel"],
+        button[aria-label="Add another post to thread"],
+        button[data-testid="openMediaBtn"],
+        button[data-testid="openGifBtn"],
+        button[aria-label="Open emoji picker"]
+     ):not(:hover) {
         background-color: transparent !important;
         transition-property: var(--tweak-transition-properties), transform;
 
@@ -406,14 +444,31 @@ Section headings (use Cmd-F to navigate)
             transform: scale(0.9);
         }
     }
-    /* white/black bg buttons hover */
-    /* top bar buttons */
-    :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
-    :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
-    /* pill buttons */
-    :root.theme--light :is(a, button)[style*="background-color: rgb(220, 226, 234)"],
-    :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"] {
+
+    /* pill buttons should have a background */
+    :where(
+        :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
+        :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"]
+    ):not(:hover) {
         background-color: var(--tweak-bg-secondary) !important;
+    }
+
+    /* white/black bg buttons hover */
+    :where(
+        /* top bar buttons */
+        :root.theme--light :is(a, button)[style*="background-color: rgb(239, 242, 246)"],
+        :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
+        /* pill buttons */
+        :root.theme--light :is(a, button)[style*="background-color: rgb(220, 226, 234)"],
+        :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"],
+        /* post composer cancel and attachment buttons */
+        button[aria-label="Cancel"],
+        button[aria-label="Add another post to thread"],
+        button[data-testid="openMediaBtn"],
+        button[data-testid="openGifBtn"],
+        button[aria-label="Open emoji picker"]
+     ) {
+        background-color: var(--tweak-fg-more-translucent) !important;
         transition-property: var(--tweak-transition-properties), transform;
 
         &:active {
@@ -421,8 +476,8 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* on/off switches */
-    .r-1mhb1uw.r-1k25im9,
+    /* TODO on/off switches */
+    /* .r-1mhb1uw.r-1k25im9,
     div[style*="height: 24px; width: 36px;"] {
         justify-content: center;
         border-width: 1px !important;
@@ -436,35 +491,35 @@ Section headings (use Cmd-F to navigate)
                 background: var(--tweak-accent) !important;
             }
         }
-    }
+    } */
 
-    /* FIXME radio buttons */
-    div[role="radio"] > div[style*="border-radius: 999px"] {
+    /* TODO radio buttons */
+    /* div[role="radio"] > div[style*="border-radius: 999px"] {
         border-width: 1px !important;
     }
     div[role="radio"][aria-checked="true"]
         > div[style*="border-radius: 999px"]
         > div[style*="border-radius: 999px"] {
-            background: var(--tweak-fg-translucent) !important;
-        }
+        background: var(--tweak-fg-translucent) !important;
+    } */
 
-    /* FIXME checkboxes */
-    div[role="checkbox"] div[style*="border-color"] {
+    /* TODO checkboxes */
+    /* div[role="checkbox"] div[style*="border-color"] {
         border-width: 1px !important;
 
         &:is([aria-checked="true"] div) {
             background-color: var(--tweak-bg-secondary) !important;
         }
-    }
+    } */
 
     /* segmented controls */
-    div[role="radiogroup"] > [style*="flex-direction: row;"] > div[role="radio"] {
-        &[aria-checked="false"] > div {
-            background: var(--tweak-fg-more-translucent) !important;
+    div[role="radiogroup"] > div > div[role="radio"] {
+        &[aria-checked="false"] > div[style^="border-left-width: 1px"] {
+            background: var(--tweak-bg) !important;
         }
-        &[aria-checked="true"] > div {
+        &[aria-checked="true"] > div[style^="border-left-width: 1px"] {
             background: var(--tweak-fg-translucent) !important;
-            > div {
+            > div[dir="auto"] {
                 color: var(--tweak-bg) !important;
             }
         }
@@ -483,21 +538,16 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* FIXME toasts */
-    .r-umfvqw.r-18rd0c5.r-ctyi22 {
-        -webkit-backdrop-filter: var(--tweak-blur);
-        backdrop-filter: var(--tweak-blur);
-        box-shadow: var(--tweak-shadow);
-        background-color: var(--tweak-bg-translucent);
+    /* toasts */
+    li[data-sonner-toast] div[style*="padding: 14px 16px;"] {
+        box-shadow: var(--tweak-shadow) !important;
+        background-color: var(--tweak-bg) !important;
         :root.theme--dim & {
             border-width: 1px !important;
         }
-        > div {
-            color: var(--tweak-fg);
-        }
     }
 
-    /* notification badge */
+    /* notification badges */
     :is(a, div):is(
         [aria-label="Notifications"],
         [aria-label="Messages"],
@@ -505,8 +555,8 @@ Section headings (use Cmd-F to navigate)
     ) div[aria-label*="unread item"] {
         background-color: var(--tweak-accent) !important;
         color: var(--tweak-bg) !important;
-
-        div {
+        
+        > div.css-146c3p1 {
             color: var(--tweak-bg) !important;
         }
     }
@@ -515,16 +565,12 @@ Section headings (use Cmd-F to navigate)
 
     /* blur toolbar backgrounds */
     /* tab bars */
-    div:has(> div > div[data-testid$="-selector"]),
+    div[style^="width: 100%"]:has(> div > div[data-testid$="-selector"]),
     /* mobile nav bar */
     nav.r-1p0dtai {
         -webkit-backdrop-filter: var(--tweak-blur) !important;
         backdrop-filter: var(--tweak-blur) !important;
         background: var(--tweak-bg-translucent) !important;
-
-        > div {
-            background: transparent !important;
-        }
 
         @media (prefers-reduced-transparency: reduce) {
             -webkit-backdrop-filter: none !important;
@@ -533,19 +579,9 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* nav bar icons for all layouts */
-    nav[role="navigation"] svg {
-        height: 28px;
-    }
-
     /* mobile nav bar */
     nav.r-1p0dtai {
         box-shadow: var(--tweak-shadow);
-    }
-
-    /* mobile unread chat badge */
-    div.r-wzwllv {
-        background-color: var(--tweak-accent) !important;
     }
 
     /* hamburger menu drawer */
@@ -555,15 +591,15 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* hamburger menu drawer Help text */
-    button[aria-label="Get help"] > div {
+    button[aria-label="Get help"] > div.css-146c3p1 {
         color: var(--tweak-fg-translucent) !important;
     }
 
     /* hamburger menu notifications badge */
-    button[data-testid="menuItemButton-Notifications"] svg + div > div {
+    button[data-testid="menuItemButton-Notifications"] div[style^="border-radius: 999px;"] {
         background-color: var(--tweak-accent) !important;
 
-        > div {
+        > div[dir="auto"] {
             color: var(--tweak-bg) !important;
         }
     }
@@ -571,7 +607,10 @@ Section headings (use Cmd-F to navigate)
     /* ----- !FEED ----- */
 
     /* custom title */
-    :is(div, button):has(> svg > path[d^="M13.873"]) {
+    :is(
+        div[style^="flex: 1 1 0%"],
+        button.r-1otgn73
+    ):has(> svg > path[d^="M13.873"]) {
         width: max(var(--tweak-option-use-title), 28px) !important;
         text-align: center;
 
@@ -593,24 +632,14 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* feed, profile, list tab container */
-    div[role="tablist"] > div > div {
-        margin-inline: auto;
-    }
-
     /* feed, profile, list tab */
     div[role="tab"] {
         margin-inline: 3.5px;
         border-radius: var(--tweak-radius);
         background-clip: padding-box;
 
-        > div {
+        > div:only-child {
             padding-bottom: 0;
-        }
-
-        /* inactive tab names */
-        .r-oucylx div {
-            font-weight: 500 !important;
         }
     }
 
@@ -636,30 +665,27 @@ Section headings (use Cmd-F to navigate)
     /* floating compose buttons */
     button[data-testid="composeFAB"],
     button[data-testid="newChatFAB"] {
-        cursor: pointer;
+        background-color: var(--tweak-accent) !important;
+        box-shadow: var(--tweak-shadow);
 
-        > div {
-            box-shadow: var(--tweak-shadow);
+        &:hover, &:active {
+            background-color: var(--tweak-accent-darker) !important;
         }
 
-        svg {
+        > svg[stroke="currentColor"] {
             stroke: var(--tweak-bg);
-        }
-
-        path {
-            fill: transparent !important;
         }
     }
 
-    /* desktop compose button */
-    button[aria-label="Compose new post"][class][style] {
+    /* desktop compose button (with text) */
+    button[aria-label="Compose new post"] {
         background: var(--tweak-accent) !important;
 
         &:hover, &:active {
             background: var(--tweak-accent-darker) !important;
         }
 
-        div {
+        div[dir="auto"] {
             color: var(--tweak-bg) !important;
         }
 
@@ -675,8 +701,7 @@ Section headings (use Cmd-F to navigate)
     /* quote post hover overlay */
     div:first-child:empty:has(~ div[aria-label^="Post by"]),
     /* reply hover overlay */
-    div:first-child:empty:has(~ div[data-testid^="postThreadItem-"])
-    {
+    div:first-child:empty:has(~ div[data-testid^="postThreadItem-"]) {
         opacity: 0 !important;
     }
 
@@ -684,8 +709,7 @@ Section headings (use Cmd-F to navigate)
     div[data-testid^='feedItem-'].r-1loqt21,
     div[data-testid^='feedItem-'] > .r-1loqt21,
     /* replies */
-    div > div[data-testid^="postThreadItem-"]
-    {
+    div > div[data-testid^="postThreadItem-"] {
         cursor: auto;
     }
 
@@ -695,14 +719,14 @@ Section headings (use Cmd-F to navigate)
         [data-testid^="postThreadItem-"],
         [data-testid^="feedItem-"],
         [data-testid="composePostView"]
-    ) div:has(> [aria-label^="Post by"]),
+    ) div[style^="border-radius: 12px"]:has(> [aria-label^="Post by"]),
     /* URL cards in posts */
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
     ) a[target="_blank"][aria-label],
     /* URL cards in post composer */
-    div[data-testid="composePostView"] div:has(
+    div[data-testid="composePostView"] div[style^="margin-bottom: 20px"]:has(
         > div > button[aria-label="Remove attachment"]
     ),
     /* content warnings */
@@ -728,13 +752,13 @@ Section headings (use Cmd-F to navigate)
         [aria-label="Misleading"],
         [aria-label="Inauthentic Account"],
         [aria-label="Post Hidden by Muted Word"]
-    ) > div {
+    ) > div[style^="flex-direction: row"] {
         border-width: 1px !important;
         border-radius: var(--tweak-radius);
         background: transparent !important;
 
         @container style(--tweak-option-small-link-previews: yes) {
-            > div:has(> div[data-expoimage="true"]) {
+            > div[style^="transition-property: color"]:has(> div[data-expoimage="true"]) {
                 flex-direction: row !important;
 
                 > div[data-expoimage="true"] {
@@ -748,7 +772,8 @@ Section headings (use Cmd-F to navigate)
             background: var(--tweak-fg-more-translucent) !important;
         }
 
-        > div {
+        > div:only-child,
+        > div[dir="auto"] {
             margin-top: 0 !important;
             border-radius: var(--tweak-radius) !important;
         }
@@ -762,51 +787,32 @@ Section headings (use Cmd-F to navigate)
         margin-top: 8px;
     }
 
-    /* post actions in feed */
-    div[data-testid="contentHider-post"] + div,
-    /* post actions in post view */
-    div[data-testid="postThreadScreen"] div[data-testid^="postThreadItem-by"] > div:last-child > div:last-child,
-    /* reply notification actions */
-    div[data-testid="notifsFeed"] div[data-testid^='feedItem-'] div:last-child[style*="justify-content: space-between;"] {
-        /* reply/repost count */
-        svg + div,
-        /* fav count */
-        button div {
-            color: var(--tweak-fg-translucent) !important;
+    /* reply/repost/like counts */
+    :is(
+        button[data-testid="replyBtn"],
+        button[data-testid="repostBtn"],
+        button[data-testid="likeBtn"]
+    ) {
+        div.css-146c3p1 {
+            display: var(--tweak-option-count-display, flex) !important;
+            transition-property: var(--tweak-transition-properties), color;
+            color: var(--tweak-fg) !important;
         }
 
-        /* hover */
-        button:not(
-            div[aria-label="Embedded video player"] button
-        ):not(
-            :has(+ video)
-        ):not(
-            [style*="background-color: rgba(0, 0, 0, 0)"]
-        ) {
-            background-color: var(--tweak-bg-secondary) !important;
-        }
-
-        /* icons */
-        path {
-            fill: var(--tweak-fg-translucent) !important;
-        }
-    }
-
-    /* back button */
-    div[data-testid="postThreadScreen"] button[aria-label="Go back"] {
-        background-color: transparent !important;
-
-        &:hover {
-            background-color: var(--tweak-bg-secondary) !important;
+        @container style(--tweak-option-count-display: --on-hover) {
+            &:not(:hover) div.css-146c3p1 {
+                color: transparent !important;
+            }
         }
     }
 
     /* thread lines */
     .r-m5arl1,
-    div[data-testid="postThreadScreen"] div[style*="; width: 2px"] {
+    div[style*="; width: 2px"] {
         background-color: var(--tweak-fg-more-translucent) !important;
     }
-    /* nested thread lines */
+
+    /* nested reply lines */
     div[data-testid="postThreadScreen"] {
         /* var(--tweak-fg-more-translucent) won't work because of stacked lines */
         --thread-border-color: color-mix(in srgb, var(--tweak-fg) 25%, var(--tweak-bg)) !important;
@@ -826,44 +832,24 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* thread line ellipses */
-    svg:has(> line + circle + circle + circle) {
-        color: var(--tweak-fg-more-translucent) !important;
-
+    svg[width="4"]:has(> line + circle + circle + circle) {
         > line {
-            stroke: currentColor !important;
+            stroke: var(--tweak-fg-more-translucent) !important;
         }
 
         > circle {
-            fill: currentColor !important;
+            fill: var(--tweak-fg-more-translucent) !important;
         }
     }
 
-    /* "View full thread" and "Continue thread" links */
-    div[data-testid="followingFeedPage-feed-flatlist"] a[href^="/profile/"] div[style*="font-variant: no-contextual"],
-    div[data-testid="postThreadScreen"] div.css-g5y9jx:has(+ div.css-g5y9jx.r-633pao.r-1wyyakw) div[style*="font-variant: no-contextual"] {
-        color: var(--tweak-fg) !important;
-    }
-
-    /* hand cursor for "view full thread" link */
-    .r-e69tdv ~ .css-1rynq56 {
-        cursor: pointer !important;
-    }
-
     /* reply bar at bottom on mobile */
-    div[data-testid="postThreadScreen"] div[style*="background-image: linear-gradient"] {
-        background: transparent !important;
-    }
     button[aria-label="Compose reply"] {
         background: var(--tweak-fg-more-translucent) !important;
+        -webkit-backdrop-filter: var(--tweak-blur);
         backdrop-filter: var(--tweak-blur);
     }
 
     /* ----- !CONTEXT MENUS ----- */
-
-    /* disable language picker background dim */
-    div[aria-label="Toggle dropdown"] {
-        opacity: 0;
-    }
 
     div[data-radix-popper-content-wrapper] {
         background: transparent !important;
@@ -893,86 +879,61 @@ Section headings (use Cmd-F to navigate)
             border-width: 1px !important;
         }
 
-        > div {
+        > div:only-child {
             border-radius: var(--tweak-radius) !important;
-        }
-
-        /* menu item wrapper */
-        > div:not([role]),
-        /* list edit menu */
-        &:has(> .nativeDropdown-item) {
             box-shadow: var(--tweak-shadow) !important;
             background-color: transparent !important;
         }
 
-        /* menu items */
-        div[role="menuitem"] {
-            &[style*="background-color"] {
-                background: var(--tweak-bg-secondary) !important;
-            }
-
-            &:first-child {
-                border-top-right-radius: var(--tweak-radius) !important;
-                border-top-left-radius: var(--tweak-radius) !important;
-            }
-            &:last-child {
-                border-bottom-right-radius: var(--tweak-radius) !important;
-                border-bottom-left-radius: var(--tweak-radius) !important;
-            }
-
-            > div {
-                color: var(--tweak-fg) !important;
-                font-weight: 400 !important;
-                font-size: 16px !important;
-                user-select: none;
-            }
-
-            svg path {
-                fill: currentColor !important;
-            }
+        /* "Switch account" menu title and maybe others */
+        div[dir="auto"]:first-child {
+            color: var(--tweak-fg) !important;
+            -webkit-user-select: none;
+            user-select: none;
         }
     }
 
-    /* language picker */
-    div[aria-label="Toggle dropdown"] + div:has(> button) {
-        transform-origin: bottom right;
-        box-shadow: var(--tweak-shadow);
-        padding-inline: 4px;
-    }
+    /* menu items */
+    div[role="menuitem"] {
+        &:first-child {
+            border-top-right-radius: var(--tweak-radius) !important;
+            border-top-left-radius: var(--tweak-radius) !important;
+        }
+        &:last-child {
+            border-bottom-right-radius: var(--tweak-radius) !important;
+            border-bottom-left-radius: var(--tweak-radius) !important;
+        }
 
-    /* hover highlight for language picker options */
-    div[aria-label="Toggle dropdown"] + div > button:hover {
-        border-radius: 8px;
-        background-color: rgba(0, 0, 0, 0.067) !important;
+        > div[dir="auto"] {
+            color: var(--tweak-fg) !important;
+            font-weight: 400 !important;
+            font-size: 16px !important;
+            -webkit-user-select: none;
+            user-select: none;
+        }
 
-        :root.theme--dim & {
-            background: rgba(255, 255, 255, 0.07) !important;
+        path {
+            fill: currentColor !important;
+        }
+
+        /* hover */
+        &[style*="background-color"] {
+            background: var(--tweak-bg-secondary) !important;
         }
     }
 
     /* dividers */
-    div[data-radix-menu-content] div[role='separator'] {
+    div[role='separator'] {
         background: var(--tweak-fg-more-translucent) !important;
-    }
-    div[aria-label="Toggle dropdown"] + div > div {
-        border-bottom-width: 1px !important;
-        border-color: var(--tweak-fg-more-translucent) !important;
-    }
-
-    /* fix padding for "Post language" label */
-    div[aria-label="Toggle dropdown"] + div > div:first-child {
-        border-radius: 0 !important;
-        padding-bottom: 16px;
     }
 
     /* ----- !MODALS ----- */
 
     /* modals */
-    /* TODO some modals in Settings aren't matched by this */
-    div[role="dialog"]:not(:has([data-testid="composePostView"])),
-    div:has(> div[data-testid="composePostView"]),
-    div:has(> div > div[data-testid="editProfileModal"]),
-    div:has(> div[data-testid="userAddRemoveListsModal"]) {
+    /* TODO look for modals that aren't matched by this */
+    div[role="dialog"]:not(:has(> div > div[data-testid="composePostView"])),
+    div.r-rs99b7:has(> div[data-testid="composePostView"]),
+    div.r-rs99b7:has(> div[data-testid="userAddRemoveListsModal"]) {
         margin: 0 20px !important;
         box-shadow: var(--tweak-shadow) !important;
         border-radius: var(--tweak-radius) !important;
@@ -986,12 +947,12 @@ Section headings (use Cmd-F to navigate)
     /* blurred backgrounds */
     /* hamburger menu */
     div[aria-label="Close drawer menu"],
-    /* post composer and most other modals */
-    div[aria-label="Close active dialog"]:has([role="dialog"]),
-    /* edit profile */
-    div[style*="background-color: rgba(0, 0, 0, 0.8)"],
+    /* post composer and some other modals (ex. "Add to lists") */
+    div:is(.r-17c3jg3, div[style*="background-color: rgba(0, 0, 0, 0.8)"]),
+    /* some other modals */
+    div[aria-label="Close active dialog"],
     /* image viewer */
-    div:has(> button[aria-label="Close image viewer"]) {
+    div.r-1xcajam:has(> button[aria-label="Close image viewer"]) {
         background: transparent !important;
 
         /* the pseudo-element works around a Safari issue */
@@ -1021,8 +982,8 @@ Section headings (use Cmd-F to navigate)
             }
         }
 
-        &[style*="background-color: rgba(0, 0, 0, 0)"]::before {
-            opacity: 0;
+        div.r-1xcajam[style*="background-color: rgb(0, 0, 0)"] {
+            background-color: transparent !important;
         }
     }
 
@@ -1033,46 +994,9 @@ Section headings (use Cmd-F to navigate)
         justify-content: center;
     }
 
-    /* Cancel button */
-    :root div[data-testid="composePostView"] button[role="button"][aria-label="Cancel"] {
-        background-color: transparent !important;
-
-        &:active {
-            transform: scale(0.9);
-        }
-
-        div {
-            color: var(--tweak-fg) !important;
-        }
-    }
-
-    /* Post button */
-    div[data-testid="composePostView"] button[data-testid="composerPublishBtn"][style] {
-        background-color: var(--tweak-accent) !important;
-
-        div {
-            color: var(--tweak-bg) !important;
-        }
-
-        &:hover {
-            background-color: var(--tweak-accent-darker) !important;
-        }
-
-        &[disabled] {
-            background-color: var(--tweak-bg-secondary) !important;
-
-            div {
-                color: var(--tweak-fg-more-translucent) !important;
-            }
-        }
-    }
-
-    /* attachment button hover */
-    div[data-testid="composePostView"] :is(
-        :root.theme--light button[style*="background-color: rgb(204, 225, 255)"],
-        :root.theme--dim button[style*="background-color: rgb(18, 52, 100)"]
-    ) {
-        background-color: var(--tweak-bg-secondary) !important;
+    /* fix Cancel button color */
+    button[aria-label="Cancel"] > div.css-146c3p1 {
+        color: var(--tweak-fg) !important;
     }
 
     /* post composer and alt text text fields */
@@ -1089,22 +1013,6 @@ Section headings (use Cmd-F to navigate)
         color: var(--tweak-accent);
     }
 
-    /* character count circle */
-    div[data-testid='composePostView'] svg[width="30"][height="30"] path,
-    /* alt text character count circle */
-    div[aria-label="Add alt text"] svg[width="26"][height="26"] path {
-        stroke: var(--tweak-accent) !important;
-    }
-
-    /* URL card remove button */
-    button[aria-label="Remove attachment"] {
-        background: var(--tweak-accent) !important;
-
-        path[fill] {
-            fill: var(--tweak-bg) !important;
-        }
-    }
-
     /* username autocomplete popup */
     .tippy-box .items {
         box-shadow: var(--tweak-shadow);
@@ -1115,32 +1023,56 @@ Section headings (use Cmd-F to navigate)
             border-width: 1px !important;
         }
 
-        button {
+        button.r-1otgn73 {
             background-color: transparent;
             border-radius: 8px !important;
 
             &[style*="background-color:"] {
                 background-color: var(--tweak-accent) !important;
 
-                div[style*="color"] {
+                div.r-1udbk01 {
                     color: var(--tweak-bg) !important;
                 }
-            }
-
-            &:first-child {
-                border-top-right-radius: var(--tweak-radius);
-                border-top-left-radius: var(--tweak-radius);
-            }
-
-            &:last-child {
-                border-bottom-right-radius: var(--tweak-radius);
-                border-bottom-left-radius: var(--tweak-radius);
             }
         }
     }
 
-    /* FIXME reply settings hover and selected */
-    div[aria-label="Edit post interaction settings"] :is(
+    /* reply settings button */
+    button[data-testid="openReplyGateButton"]:not(:hover) {
+        background-color: transparent !important;
+    }
+
+    /* language picker */
+    button[data-testid="selectLangBtn"]:hover {
+        background-color: var(--tweak-fg-more-translucent) !important;
+    }
+
+    /* character count circle */
+    div[data-testid='composePostView'] svg[width="30"][height="30"] path,
+    /* alt text character count circle */
+    div[aria-label="Add alt text"] svg[width="26"][height="26"] path {
+        stroke: var(--tweak-accent) !important;
+    }
+
+    /* image buttons, remove attachment button */
+    button[data-testid="altTextButton"],
+    button[data-testid="editPhotoButton"],
+    button[data-testid="removePhotoButton"],
+    button[aria-label="Remove attachment"] {
+        background: var(--tweak-fg) !important;
+        box-shadow: var(--tweak-shadow);
+
+        div[style^="color: "] {
+            color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* TODO reply settings hover and selected */
+    /* div[aria-label="Edit post interaction settings"] :is(
         button[aria-checked="true"] > div,
         :root.theme--light div[style*="background-color: rgb(212, 219, 226)"],
         :root.theme--dim div[style*="background-color: rgb(46, 64, 82)"]
@@ -1154,7 +1086,7 @@ Section headings (use Cmd-F to navigate)
         path {
             fill: var(--tweak-bg) !important;
         }
-    }
+    } */
 
     /* ----- !IMAGES & VIDEO ----- */
 
@@ -1164,14 +1096,11 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* alt text indicator */
-    :is(
-        div[data-expoimage="true"],
-        button:has(> div[data-expoimage="true"])
-    ) ~ div[style*="bottom: 4px; right: 4px;"] > div {
+    div[style*="bottom: 4px; right: 4px;"] > div.css-146c3p1 {
         border-radius: 4px;
         background-color: var(--tweak-bg) !important;
 
-        > div > div {
+        > div > div[dir="auto"] {
             color: var(--tweak-fg) !important;
         }
     }
@@ -1190,7 +1119,7 @@ Section headings (use Cmd-F to navigate)
         @media (hover: hover) {
             opacity: 0;
 
-            div:has(> button[aria-label="Close image viewer"]):hover & {
+            div.r-1xcajam:has(> button[aria-label="Close image viewer"]):hover & {
                 opacity: 0.5;
 
                 &:hover {
@@ -1201,24 +1130,25 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* move close button to left */
-    div:has(> div > button[aria-label="Close image"]) {
+    div.r-1ki14p2:has(> div > button[aria-label="Close image"]) {
         right: auto !important;
         left: 10px;
     }
 
     /* remove transition from images */
-    button[aria-label="Close image viewer"] div:has(+ img) {
+    button[aria-label="Close image viewer"] > div.r-1pi2tsx:has(+ img) {
         transition: none !important;
     }
 
-    /* alt text */
-    div:has(> div[aria-label='Expand alt text']) {
+    /* alt text in image viewer */
+    div.r-1fkl15p:has(> div[aria-label='Expand alt text']) {
         box-shadow: var(--tweak-shadow);
         background-color: var(--tweak-bg);
     }
-    div[aria-label='Expand alt text'] > div {
+    div[aria-label='Expand alt text'] > div[dir="auto"] {
         cursor: text;
         color: var(--tweak-fg) !important;
+        -webkit-user-select: text;
         user-select: text;
         text-transform: none !important;
     }
@@ -1231,43 +1161,38 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* player controls */
-        button:is(
-            [aria-label="Play"],
-            [aria-label="Pause"],
-            [aria-label="Mute"],
-            [aria-label="Unmute"],
-            [aria-label="Enter fullscreen"]
-        ) > svg > path {
-            color: var(--contrast-color) !important;
+        path {
             fill: var(--contrast-color) !important;
         }
 
         /* elapsed time */
-        [style*="color: rgb(255, 255, 255)"] {
+        div[style*="color: rgb(255, 255, 255)"] {
             color: var(--contrast-color) !important;
         }
+    }
 
-        /* scrubber */
-        div[data-testid="scrubber"] > div > div:first-child {
-            background-color: color-mix(in srgb, var(--contrast-color) 40%, transparent);
-            
-            > div {
-                background-color: var(--contrast-color);
-            }
+    /* scrubber */
+    div[data-testid="scrubber"] > div > div:first-child {
+        background-color: color-mix(in srgb, var(--contrast-color) 40%, transparent) !important;
+
+        > div[style*="color: rgb(255, 255, 255)"] {
+            background-color: var(--contrast-color) !important;
         }
-        div[role="slider"] > div[style*="transform: scale(0.6)"] {
-            transform: scale(1) !important;
-        }
+    }
+    /* knob */
+    div[role="slider"] > div[style*="transform: scale(0.6)"] {
+        background-color: var(--contrast-color) !important;
+        transform: scale(1) !important;
+    }
 
-        /* volume slider */
-        input[type="range"] {
-            background-color: transparent !important;
-            accent-color: var(--contrast-color) !important;
+    /* volume slider */
+    input[aria-label="Volume"] {
+        background-color: transparent !important;
+        accent-color: var(--contrast-color) !important;
 
-            &::-webkit-slider-thumb,
-            &::-webkit-slider-runnable-track {
-                background-color: var(--contrast-color) !important;
-            }
+        &::-webkit-slider-thumb,
+        &::-webkit-slider-runnable-track {
+            background-color: var(--contrast-color) !important;
         }
     }
 
@@ -1275,7 +1200,7 @@ Section headings (use Cmd-F to navigate)
 
     div[data-testid="notifsFeed"] {
         /* notification spacing */
-        & > div[style^="width: 100%;"] > div > div {
+        div.r-q5xsgd > div:has(> :is(a, div)[data-testid^="feedItem-by-"]) {
             margin: 8px 8px 0 !important;
             border-radius: var(--tweak-radius);
             overflow: hidden;
@@ -1288,140 +1213,141 @@ Section headings (use Cmd-F to navigate)
         }
 
         /* disable hover highlight */
-        a[data-testid^='feedItem-'] > div:first-child:empty,
-        div[data-testid^='feedItem-']:hover > [role='link'] {
+        a[data-testid^='feedItem-by-'] > div:first-child:empty {
             background-color: transparent !important;
         }
 
         /* disable hand cursor on notification body */
-        a[data-testid^='feedItem-'].r-1otgn73 {
+        a[data-testid^='feedItem-by-'].r-1otgn73 {
             cursor: default !important;
         }
         /* restore on images */
-        [data-expoimage="true"] {
+        div[data-expoimage="true"] {
             cursor: pointer;
         }
     }
+
 
     /* ----- !PROFILE ----- */
 
-    [data-testid="profileView"] {
-        /* back button */
-        button[aria-label="Back"] {
-            > div {
-                background: var(--tweak-bg) !important;
-                
-                &:hover {
-                    background: var(--tweak-bg-secondary) !important;
-                }
-            }
-            
-            path {
-                fill: var(--tweak-fg) !important;
+    /* back button */
+    button[data-testid="profileHeaderBackBtn"] {
+        > div[style^="align-items: center"] {
+            background: var(--tweak-bg) !important;
+
+            &:hover {
+                background: var(--tweak-bg-secondary) !important;
             }
         }
-        
-        /* restore profile pic border */
-        div[data-testid="profileHeaderAviButton"] {
-            border: 2px solid var(--tweak-bg) !important;
-        }
 
-        /* hand cursor for profile pic */
-        div[data-testid="userAvatarImage"] {
-            cursor: pointer;
-        }
-
-        /* "Follows you" box */
-        :root.theme--light & div[style*="background-color: rgb(239, 242, 246)"],
-        :root.theme--dim & div[style*="background-color: rgb(34, 46, 63)"]{
-            background: var(--tweak-bg-secondary) !important;
+        path {
+            fill: var(--tweak-fg) !important;
         }
     }
 
+    /* restore profile pic border */
+    div[data-testid="profileHeaderAviButton"] {
+        border: 2px solid var(--tweak-bg) !important;
+    }
+
+    /* hand cursor for profile pic */
+    div[data-testid="userAvatarImage"] {
+        cursor: pointer;
+    }
+
+    /* follow button (also applies to post pages) */
+    button[data-testid="followBtn"] > div[dir="auto"] {
+        color: var(--tweak-bg) !important;
+    }
+
+    /* Similar accounts box */
+    div[data-testid="profileView"] div.r-12vffkv {
+        border-radius: var(--tweak-radius);
+    }
+    button[aria-label="Follow"] > div[style*="color: rgb(255, 255, 255)"] {
+        color: var(--tweak-bg) !important;
+    }
 
     /* ----- !CHATS ----- */
 
-    div[data-testid="messagesScreen"] {
-        /* new chat button */
-        a[aria-label="Chat settings"] + button[aria-label="New chat"] {
-            background-color: var(--tweak-accent) !important;
-
-            &:hover, &:active {
-                background-color: var(--tweak-accent-darker) !important;
-            }
-        }
-
-        /* chats */
-        a[href^="/messages/"] {
-            cursor: default;
-
-            > div[style*="background-color:"] {
-                background-color: transparent !important;
-            }
-        }
-
-        /* chat requests banner */
-        a[aria-label="Chat request inbox"] {
-            background-color: var(--tweak-bg-secondary) !important;
-            border-radius: var(--tweak-radius) !important;
-            cursor: pointer !important;
-        }
+    /* restore hand cursor on settings button */
+    a[href="/messages/settings"] {
+        cursor: pointer;
     }
 
-    div[data-testid="messagesInboxScreen"] {
-        /* chat requests */
-        a[href^="/messages/"] > div {
+    /* chat requests banner */
+    a[aria-label="Chat request inbox"] {
+        background-color: var(--tweak-bg-secondary) !important;
+        border-radius: var(--tweak-radius) !important;
+        cursor: pointer !important;
+    }
+
+    /* chats list */
+    a[href^="/messages/"] {
+        cursor: default;
+
+        > div[style*="background-color:"] {
             background-color: transparent !important;
-            cursor: default;
         }
     }
 
-    div[data-testid="convoScreen"] {
-        /* incoming message bubbles */
-        div[style*="align-self: flex-start"]:has(> div[data-word-wrap="1"]) {
+    /* placeholder for missing avatars */
+    svg[data-testid="userAvatarFallback"] {
+        circle[fill="#0070ff"] {
+            fill: var(--tweak-fg) !important;
+        }
+        :is(circle, path)[fill="#fff"] {
+            fill: var(--tweak-bg) !important;
+        }
+    }
+
+    /* message bubbles */
+    div[data-testid="convoScreen"] div[style^="padding: 8px 14px"]:has(> div[data-word-wrap="1"]) {
+        /* incoming */
+        &[style*="align-self: flex-start"] {
+            background-color: var(--tweak-bg-secondary) !important;
+
+            > div, a {
+                color: var(--tweak-fg) !important;
+            }
+        }
+
+        /* sent */
+        &[style*="align-self: flex-end"] {
             background-color: var(--tweak-fg) !important;
 
             > div, a {
                 color: var(--tweak-bg) !important;
             }
         }
+    }
 
-        /* sent message bubbles */
-        div[style*="align-self: flex-end"]:has(> div[data-word-wrap="1"]) {
-            background-color: var(--tweak-accent) !important;
+    /* message text field */
+    div[style*="height: 44px;"]:has(> textarea[placeholder="Write a message"]) {
+        align-items: center;
+        background-color: var(--tweak-fg-more-translucent) !important;
 
-            > div, a {
-                color: var(--tweak-bg) !important;
-            }
+        > button[aria-label="Open emoji picker"],
+        > textarea[placeholder="Write a message"],
+        > button[aria-label="Send message"] {
+            margin-top: 0 !important;
+            padding-block: 0 !important;
+            resize: none !important;
         }
+    }
 
-        /* message text field */
-        div:has(> textarea[placeholder="Write a message"]) {
-            align-items: center;
-            background-color: var(--tweak-fg-more-translucent) !important;
+    /* send button */
+    button[aria-label="Send message"] {
+        background-color: var(--tweak-accent) !important;
 
-            textarea {
-                padding-block: 0 !important;
-                resize: none !important;
-            }
-
-            button {
-                margin-top: 0 !important;
-            }
-
-            button[aria-label="Send message"] {
-                background-color: var(--tweak-accent) !important;
-
-                path {
-                    fill: var(--tweak-bg) !important;
-                }
-            }
+        path {
+            fill: var(--tweak-bg) !important;
         }
+    }
 
-        /* remove gap under message text field  */
-        div:has(> div > div > textarea[placeholder="Write a message"]) {
-            transform: none !important;
-        }
+    /* remove gap under message text field  */
+    div[style^="transform: translateY"]:has(textarea[placeholder="Write a message"]) {
+        transform: none !important;
     }
 
     /* ----- !SETTINGS ----- */
