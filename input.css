@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-12-30.a
+@version        2025-12-31
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -1039,8 +1039,14 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* language picker */
-    button[data-testid="selectLangBtn"]:hover {
-        background-color: var(--tweak-fg-more-translucent) !important;
+    button[data-testid="selectLangBtn"] {
+        &:hover {
+            background-color: var(--tweak-fg-more-translucent) !important;
+        }
+        
+        > div[dir="auto"] {
+            color: var(--tweak-fg) !important;
+        }
     }
 
     /* character count circle */
