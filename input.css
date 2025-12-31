@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-12-30
+@version        2025-12-30.a
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -910,10 +910,6 @@ Section headings (use Cmd-F to navigate)
             font-size: 16px !important;
             -webkit-user-select: none;
             user-select: none;
-        }
-
-        path {
-            fill: currentColor !important;
         }
 
         /* hover */
