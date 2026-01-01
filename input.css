@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2025-12-31.b
+@version        2026-01-01.a
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -128,7 +128,7 @@ Section headings (use Cmd-F to navigate)
 
         --tweak-radius: 14px;
         --tweak-blur: blur(30px);
-        --tweak-shadow: rgba(0, 0, 0, 0.3) 0px 5px 20px;
+        --tweak-shadow: rgba(0, 0, 0, 0.5) 0px 5px 20px;
         --tweak-transition-properties: background, border-color;
         --tweak-transition-timing: 100ms ease;
 
@@ -196,6 +196,8 @@ Section headings (use Cmd-F to navigate)
     :where(:root.theme--light) {
         /* nav item, hovered tab, hovered hamburger menu item background */
         [style*="background-color: rgb(249, 250, 251)"],
+        /* selected radio/checkbox containers */
+        div[style*="background-color: rgb(229, 240, 255)"],
         /* loading skeletons */
         div[style*="background-color: rgb(239, 242, 246)"] {
             background-color: var(--tweak-bg-secondary) !important;
@@ -203,6 +205,8 @@ Section headings (use Cmd-F to navigate)
 
         /* active tab indicator and tablet/desktop unread chat badge */
         div[style*="background-color: rgb(0, 106, 255)"],
+        /* hovered radio buttons and switches */
+        div[style*="background-color: rgb(66, 145, 255)"],
         /* mobile chat badge */
         .r-wzwllv {
             background-color: var(--tweak-accent) !important;
@@ -250,6 +254,8 @@ Section headings (use Cmd-F to navigate)
     :where(:root.theme--dim) {
         /* nav item, hovered tab, hovered hamburger menu item background */
         [style*="background-color: rgb(28, 39, 54)"],
+        /* selected radio/checkbox containers */
+        div[style*="background-color: rgb(18, 41, 73)"],
         /* loading skeletons */
         div[style*="background-color: rgb(34, 46, 63)"] {
             background-color: var(--tweak-bg-secondary) !important;
@@ -257,6 +263,8 @@ Section headings (use Cmd-F to navigate)
 
         /* active tab indicator and tablet/desktop unread chat badge */
         div[style*="background-color: rgb(15, 115, 255)"],
+        /* hovered radio buttons and switches */
+        div[style*="background-color: rgb(6, 97, 224)"],
         /* mobile chat badge */
         .r-wzwllv {
             background-color: var(--tweak-accent) !important;
@@ -399,7 +407,10 @@ Section headings (use Cmd-F to navigate)
 
     /* accent colored buttons */
     button[data-testid="composerPublishBtn"],
+    /* alt text save button */
+    button[aria-label="Save"],
     button[data-testid="editProfileSaveBtn"],
+    button[aria-label="Add mute word with chosen settings"],
     button[aria-label="Accept chat request"],
     a[aria-label="Chat settings"] + button[aria-label="New chat"] {
         background-color: var(--tweak-accent) !important;
@@ -417,6 +428,10 @@ Section headings (use Cmd-F to navigate)
 
             > div.css-146c3p1 {
                 color: var(--tweak-fg-more-translucent) !important;
+            }
+            
+            path {
+                fill: var(--tweak-fg-more-translucent) !important;
             }
         }
     }
@@ -492,36 +507,49 @@ Section headings (use Cmd-F to navigate)
             }
         }
     } */
+    
+    /* checkboxes, radio buttons, switches */
+    div:is([role="checkbox"],[role="radio"]) {
+        div:is(
+            /* checkboxes & radio buttons */
+            [style*="border-width: 1px"],
+            /* switches */
+            [style*="height: 28px; width: 48px;"]
+        ) {
+            border-width: 1px !important;
+            border-color: var(--tweak-fg-translucent) !important;
+            background-color: var(--tweak-bg) !important;
+        }
 
-    /* TODO radio buttons */
-    /* div[role="radio"] > div[style*="border-radius: 999px"] {
-        border-width: 1px !important;
-    }
-    div[role="radio"][aria-checked="true"]
-        > div[style*="border-radius: 999px"]
-        > div[style*="border-radius: 999px"] {
-        background: var(--tweak-fg-translucent) !important;
-    } */
-
-    /* TODO checkboxes */
-    /* div[role="checkbox"] div[style*="border-color"] {
-        border-width: 1px !important;
-
-        &:is([aria-checked="true"] div) {
+        &[aria-checked="true"] div:is(
+            [style*="border-width: 1px"],
+            [style*="height: 28px; width: 48px;"]
+        ) {
+            background-color: var(--tweak-accent) !important;
+            border-color: var(--tweak-accent) !important;
+        }
+        &:not([aria-checked="true"]):hover div:is(
+            [style*="border-width: 1px"],
+            [style*="height: 28px; width: 48px;"]
+        ) {
             background-color: var(--tweak-bg-secondary) !important;
         }
-    } */
-
-    /* segmented controls */
-    div[role="radiogroup"] > div > div[role="radio"] {
-        &[aria-checked="false"] > div[style^="border-left-width: 1px"] {
-            background: var(--tweak-bg) !important;
+        
+        /* fix switch padding to account for border */
+        div[style*="height: 28px; width: 48px;"] {
+            padding: 2px !important;
         }
-        &[aria-checked="true"] > div[style^="border-left-width: 1px"] {
-            background: var(--tweak-fg-translucent) !important;
-            > div[dir="auto"] {
-                color: var(--tweak-bg) !important;
-            }
+        
+        /* radio button and switch circle */
+        div[style*="background-color: rgb(255, 255, 255)"] {
+            background-color: var(--tweak-fg) !important;
+        }
+        &[aria-checked="true"] div[style*="background-color: rgb(255, 255, 255)"] {
+            background-color: var(--tweak-bg) !important;
+        }
+
+        path {
+            fill: var(--tweak-bg) !important;
         }
     }
 
@@ -925,7 +953,6 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !MODALS ----- */
 
-    /* modals */
     /* TODO look for modals that aren't matched by this */
     div[role="dialog"]:not(:has(> div > div[data-testid="composePostView"])),
     div.r-rs99b7:has(> div[data-testid="composePostView"]),
@@ -940,7 +967,7 @@ Section headings (use Cmd-F to navigate)
         }
     }
 
-    /* blurred backgrounds */
+    /* blur backgrounds and vertically center */
     /* hamburger menu */
     div[aria-label="Close drawer menu"],
     /* post composer and some other modals (ex. "Add to lists") */
@@ -950,7 +977,8 @@ Section headings (use Cmd-F to navigate)
     /* image viewer */
     div.r-1xcajam:has(> button[aria-label="Close image viewer"]) {
         background: transparent !important;
-
+        justify-content: safe center;
+        
         /* the pseudo-element works around a Safari issue */
         &::before {
             position: fixed;
@@ -977,6 +1005,10 @@ Section headings (use Cmd-F to navigate)
                 background: var(--tweak-bg-secondary) !important;
             }
         }
+        
+        > div[style*="min-height: 60vh"] {
+            min-height: auto !important;
+        }
 
         div.r-1xcajam[style*="background-color: rgb(0, 0, 0)"] {
             background-color: transparent !important;
@@ -984,11 +1016,6 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* ----- !POST COMPOSER ----- */
-
-    /* vertically center */
-    div[role="dialog"]:has(> div > div[data-testid='composePostView']) {
-        justify-content: center;
-    }
 
     /* fix Cancel button color */
     button[aria-label="Cancel"] > div.css-146c3p1 {
@@ -1064,15 +1091,15 @@ Section headings (use Cmd-F to navigate)
     button[data-testid="editPhotoButton"],
     button[data-testid="removePhotoButton"],
     button[aria-label="Remove attachment"] {
-        background: var(--tweak-fg) !important;
+        background: var(--tweak-bg) !important;
         box-shadow: var(--tweak-shadow);
 
         div[style^="color: "] {
-            color: var(--tweak-bg) !important;
+            color: var(--tweak-fg) !important;
         }
 
         path {
-            fill: var(--tweak-bg) !important;
+            fill: var(--tweak-fg) !important;
         }
     }
 
@@ -1101,13 +1128,9 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* alt text indicator */
-    div[style*="bottom: 4px; right: 4px;"] > div.css-146c3p1 {
+    div[style*="bottom: 4px; right: 4px;"] > div[style^="justify-content: center"] {
         border-radius: 4px;
         background-color: var(--tweak-bg) !important;
-
-        > div > div[dir="auto"] {
-            color: var(--tweak-fg) !important;
-        }
     }
 
     /* image viewer buttons */
