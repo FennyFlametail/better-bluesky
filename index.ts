@@ -3,29 +3,36 @@ import postcss from 'postcss';
 import cssnano from 'cssnano';
 import nested from 'postcss-nested';
 
-const css = await fs.readFile('./input.css', 'utf-8');
-const header =
-  css.match(/\/\* ==UserStyle==\n.+\n\/instructions \*\//s)?.[0] ?? '';
+let css = await fs.readFile('./input.css', 'utf-8');
 
-const result = await postcss([nested, cssnano]).process(css, {
-  from: './input.css',
-  to: './output.css',
-});
+/* disabled postcss because it was breaking some rules */
+// const header =
+//   css.match(/\/\* ==UserStyle==\n.+\n\/instructions \*\//s)?.[0] ?? '';
 
-result.css = result.css.replace(
-  /@-moz-document domain\("bsky\.app"\){(.+)}/s,
-  `
-@-moz-document domain("bsky.app") {
-$1
-}`
-);
+// const result = await postcss([nested, cssnano]).process(css, {
+//   from: './input.css',
+//   to: './output.css',
+// });
 
-fs.writeFile('./output-stylus.css', header.concat(result.css));
-if (result.map) fs.writeFile('./output-stylus.css.map', result.map.toString());
+// result.css = result.css.replace(
+//   /@-moz-document domain\("bsky\.app"\){(.+)}/s,
+//   `
+// @-moz-document domain("bsky.app") {
+// $1
+// }`
+// );
+
+// fs.writeFile('./output-stylus.css', header.concat(result.css));
+// if (result.map) fs.writeFile('./output-stylus.css.map', result.map.toString());
 
 /* output Userscripts for Mac/iOS file with @-moz-document removed */
-result.css = result.css.replace(
+// result.css = result.css.replace(
+//   /@-moz-document domain\("bsky\.app"\) {(.+)}/s,
+//   '$1'
+// );
+// fs.writeFile('./output-userscripts.css', header.concat(result.css));
+css = css.replace(
   /@-moz-document domain\("bsky\.app"\) {(.+)}/s,
   '$1'
 );
-fs.writeFile('./output-userscripts.css', header.concat(result.css));
+fs.writeFile('./output-userscripts.css', (css));
