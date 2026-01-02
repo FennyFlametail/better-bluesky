@@ -5,7 +5,8 @@ import nested from 'postcss-nested';
 
 let css = await fs.readFile('./input.css', 'utf-8');
 
-/* disabled postcss because it was breaking some rules */
+/* disabled because nested was breaking some rules,
+   and minification doesn't really make a performance difference */
 // const header =
 //   css.match(/\/\* ==UserStyle==\n.+\n\/instructions \*\//s)?.[0] ?? '';
 
