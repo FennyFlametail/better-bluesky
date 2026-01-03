@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-01-02.a
+@version        2026-01-03
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -123,7 +123,7 @@ Section headings (use Cmd-F to navigate)
         --tweak-danger: var(--tweak-option-danger, #c6262e);
 
         --tweak-bg-secondary: color-mix(in srgb, var(--tweak-bg) 90%, black);
-        --tweak-bg-tertiary: color-mix(in srgb, var(--tweak-bg) 75%, black);
+        --tweak-bg-tertiary: color-mix(in srgb, var(--tweak-bg) 80%, black);
         --tweak-bg-translucent: color-mix(in srgb, var(--tweak-bg) 75%, transparent);
         --tweak-fg-translucent: color-mix(in srgb, var(--tweak-fg) 75%, transparent);
         --tweak-fg-more-translucent: color-mix(in srgb, var(--tweak-fg) 25%, transparent);
@@ -155,7 +155,7 @@ Section headings (use Cmd-F to navigate)
         --tweak-danger: var(--tweak-option-danger-dark, #ed5353);
 
         --tweak-bg-secondary: color-mix(in srgb, var(--tweak-bg) 90%, white);
-        --tweak-bg-tertiary: color-mix(in srgb, var(--tweak-bg) 75%, white);
+        --tweak-bg-tertiary: color-mix(in srgb, var(--tweak-bg) 80%, white);
     }
 
     :root.theme--dark body::after {
@@ -200,13 +200,21 @@ Section headings (use Cmd-F to navigate)
 
     /* common colors in light mode */
     :where(:root.theme--light) {
+        /* various screen backgrounds */
+        div[style*="background-color: rgb(255, 255, 255)"] {
+            background-color: var(--tweak-bg) !important;
+        }
+
         /* nav item, hovered tab, hovered hamburger menu item background */
         [style*="background-color: rgb(249, 250, 251)"],
         /* selected radio/checkbox containers */
-        div[style*="background-color: rgb(229, 240, 255)"],
+        div[style*="background-color: rgb(229, 240, 255)"] {
+            background-color: var(--tweak-bg-secondary) !important;
+        }
+        
         /* loading skeletons */
         div[style*="background-color: rgb(239, 242, 246)"] {
-            background-color: var(--tweak-bg-secondary) !important;
+            background-color: var(--tweak-fg-more-translucent) !important;
         }
 
         /* active tab indicator and tablet/desktop unread chat badge */
@@ -216,11 +224,6 @@ Section headings (use Cmd-F to navigate)
         /* mobile chat badge */
         .r-wzwllv {
             background-color: var(--tweak-accent) !important;
-        }
-
-        /* various screen backgrounds */
-        div[style*="background-color: rgb(255, 255, 255)"] {
-            background-color: var(--tweak-bg) !important;
         }
 
         /* primary text */
@@ -258,13 +261,21 @@ Section headings (use Cmd-F to navigate)
 
     /* common colors in dark mode */
     :where(:root.theme--dim) {
+        /* various screen backgrounds */
+        div[style*="background-color: rgb(21, 29, 40)"] {
+            background-color: var(--tweak-bg) !important;
+        }
+
         /* nav item, hovered tab, hovered hamburger menu item background */
         [style*="background-color: rgb(28, 39, 54)"],
         /* selected radio/checkbox containers */
-        div[style*="background-color: rgb(18, 41, 73)"],
+        div[style*="background-color: rgb(18, 41, 73)"] {
+            background-color: var(--tweak-bg-secondary) !important;
+        }
+        
         /* loading skeletons */
         div[style*="background-color: rgb(34, 46, 63)"] {
-            background-color: var(--tweak-bg-secondary) !important;
+            background-color: var(--tweak-fg-more-translucent) !important;
         }
 
         /* active tab indicator and tablet/desktop unread chat badge */
@@ -274,11 +285,6 @@ Section headings (use Cmd-F to navigate)
         /* mobile chat badge */
         .r-wzwllv {
             background-color: var(--tweak-accent) !important;
-        }
-
-        /* various screen backgrounds */
-        div[style*="background-color: rgb(21, 29, 40)"] {
-            background-color: var(--tweak-bg) !important;
         }
 
         /* primary text */
@@ -503,7 +509,7 @@ Section headings (use Cmd-F to navigate)
         button[data-testid="openGifBtn"],
         button[aria-label="Open emoji picker"]
      ) {
-        background-color: var(--tweak-fg-more-translucent) !important;
+        background-color: var(--tweak-bg-secondary) !important;
          
          @media not (prefers-reduced-motion: reduce) {
             transition-property: var(--tweak-transition-properties), transform;
@@ -823,7 +829,11 @@ Section headings (use Cmd-F to navigate)
 
         &:hover {
             border-color: transparent !important;
-            background: var(--tweak-fg-more-translucent) !important;
+            background: var(--tweak-bg-secondary) !important;
+        }
+        
+        & &:hover {
+            background: var(--tweak-bg-tertiary) !important;
         }
 
         > div:only-child,
@@ -839,6 +849,21 @@ Section headings (use Cmd-F to navigate)
         [data-testid^="postThreadItem-"]
     ) a[target="_blank"][aria-label] {
         margin-top: 8px;
+    }
+    
+    /* post action buttons */
+    button[data-testid="replyBtn"],
+    button[data-testid="repostBtn"],
+    button[data-testid="likeBtn"],
+    button[data-testid="postBookmarkBtn"],
+    button[data-testid="postShareBtn"],
+    button[data-testid="postDropdownBtn"] {
+        @media not (prefers-reduced-motion: reduce) {
+            transition-property: var(--tweak-transition-properties), transform;
+            &:active {
+                transform: scale(0.85);
+            }
+        }
     }
     
     /* reply counts */
@@ -1142,7 +1167,7 @@ Section headings (use Cmd-F to navigate)
     /* language picker */
     button[data-testid="selectLangBtn"] {
         &:hover {
-            background-color: var(--tweak-fg-more-translucent) !important;
+            background-color: var(--tweak-bg-secondary) !important;
         }
         
         > div[dir="auto"] {
@@ -1250,6 +1275,11 @@ Section headings (use Cmd-F to navigate)
         -webkit-user-select: text;
         user-select: text;
         text-transform: none !important;
+    }
+    
+    /* play button for external videos */
+    button[aria-label="Play Video"] > div[style*="background-color: rgb(249, 250, 251)"] {
+        background-color: var(--tweak-bg) !important;
     }
 
     /* video player control colors */
