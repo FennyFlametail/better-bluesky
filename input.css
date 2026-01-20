@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-01-03
+@version        2026-01-20
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -19,6 +19,10 @@
   "none:None": "revert",
   "lowercase:lowercase": "lowercase",
   "uppercase:UPPERCASE": "uppercase"
+}
+@var select tweak-option-whats-up-bar "Show 'What's up' bar in feed" {
+  "yes:Yes": "flex",
+  "no:No*": "none"
 }
 @var select tweak-option-reply-count-display "Show reply counts" {
   "yes:Yes": "block",
@@ -753,6 +757,21 @@ Section headings (use Cmd-F to navigate)
             fill: var(--tweak-bg) !important;
         }
     }
+    
+    /* "What's up" bar */
+    button[aria-label="Compose new post"][style*="padding: 12px 15px 12px 18px"] {
+        display: var(--tweak-option-whats-up-bar, none);
+        background-color: transparent !important;
+        
+        div[dir="auto"] {
+            color: var(--tweak-fg) !important;
+        }
+        
+        path[fill] {
+            fill: var(--tweak-fg) !important;
+        }
+    }
+    
 
     /* ----- !POSTS ----- */
 
