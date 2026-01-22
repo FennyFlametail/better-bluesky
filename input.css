@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-01-20
+@version        2026-01-21
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -903,6 +903,7 @@ Section headings (use Cmd-F to navigate)
     /* repost/like counts in feed */
     :is(
         button[data-testid="repostBtn"],
+        button[aria-label="Repost or quote post"],
         button[data-testid="likeBtn"]
     ) {
         div.css-146c3p1 {
