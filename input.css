@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-01-21
+@version        2026-01-24
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -803,7 +803,7 @@ Section headings (use Cmd-F to navigate)
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
-    ) a[target="_blank"][aria-label],
+    ) a[target="_blank"][aria-label]:not([aria-label="Translate"]),
     /* URL cards in post composer */
     div[data-testid="composePostView"] div[style^="margin-bottom: 20px"]:has(
         > div > button[aria-label="Remove attachment"]
@@ -866,7 +866,7 @@ Section headings (use Cmd-F to navigate)
     div:is(
         [data-testid='contentHider-post'],
         [data-testid^="postThreadItem-"]
-    ) a[target="_blank"][aria-label] {
+    ) a[target="_blank"][aria-label]:not([aria-label="Translate"]) {
         margin-top: 8px;
     }
     
@@ -1395,8 +1395,8 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* restore profile pic border */
-    div[data-testid="profileHeaderAviButton"] {
-        border: 2px solid var(--tweak-bg) !important;
+    div[data-testid="profileHeaderAviButton"] > div[style*="border-width: 2px;"] {
+        border: 2px solid transparent !important;
     }
 
     /* hand cursor for profile pic */
