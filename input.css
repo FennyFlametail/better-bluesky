@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-01-24
+@version        2026-02-25
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -475,6 +475,7 @@ Section headings (use Cmd-F to navigate)
         :root.theme--dim :is(a, button)[style*="background-color: rgb(34, 46, 63)"],
         /* post composer cancel and attachment buttons */
         button[aria-label="Cancel"],
+        button[aria-label="Drafts"],
         button[aria-label="Add another post to thread"],
         button[data-testid="openMediaBtn"],
         button[data-testid="openGifBtn"],
@@ -508,6 +509,7 @@ Section headings (use Cmd-F to navigate)
         :root.theme--dim :is(a, button)[style*="background-color: rgb(44, 58, 78)"],
         /* post composer cancel and attachment buttons */
         button[aria-label="Cancel"],
+        button[aria-label="Drafts"],
         button[aria-label="Add another post to thread"],
         button[data-testid="openMediaBtn"],
         button[data-testid="openGifBtn"],
@@ -1070,7 +1072,7 @@ Section headings (use Cmd-F to navigate)
     /* ----- !MODALS ----- */
 
     /* TODO look for modals that aren't matched by this */
-    div[role="dialog"]:not(:has(> div > div[data-testid="composePostView"])),
+    div[role="dialog"]:not([aria-label="Image viewer"]):not(:has(> div > div[data-testid="composePostView"])),
     div.r-rs99b7:has(> div[data-testid="composePostView"]),
     div.r-rs99b7:has(> div[data-testid="userAddRemoveListsModal"]) {
         margin: 0 20px !important;
@@ -1091,7 +1093,7 @@ Section headings (use Cmd-F to navigate)
     /* some other modals */
     div[aria-label="Close active dialog"],
     /* image viewer */
-    div.r-1xcajam:has(> button[aria-label="Close image viewer"]) {
+    div[style*="inset: 0px"]:has(> button[aria-label="Close image viewer"]) {
         background: transparent !important;
         justify-content: safe center;
         
@@ -1133,8 +1135,8 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !POST COMPOSER ----- */
 
-    /* fix Cancel button color */
-    button[aria-label="Cancel"] > div.css-146c3p1 {
+    /* fix Cancel and Drafts button color */
+    button:is([aria-label="Cancel"], [aria-label="Drafts"]) > div.css-146c3p1 {
         color: var(--tweak-fg) !important;
     }
 
@@ -1238,11 +1240,6 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !IMAGES & VIDEO ----- */
 
-    /* image background */
-    div[data-expoimage="true"] img {
-        background-color: var(--tweak-bg-secondary);
-    }
-
     /* alt text indicator */
     div[style*="bottom: 4px; right: 4px;"] > div[style^="justify-content: center"] {
         border-radius: 4px;
@@ -1250,7 +1247,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* image viewer buttons */
-    button[aria-label="Close image"],
+    button[aria-label="Close image viewer"],
     button[aria-label='Previous image'],
     button[aria-label='Next image'] {
         opacity: 0.5;
@@ -1285,9 +1282,9 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* alt text in image viewer */
-    div.r-1fkl15p:has(> div[aria-label='Expand alt text']) {
+    div[style*="animation: 0.15s"]:has(> div[aria-label='Expand alt text']) {
         box-shadow: var(--tweak-shadow);
-        background-color: var(--tweak-bg);
+        background-color: var(--tweak-bg) !important;
     }
     div[aria-label='Expand alt text'] > div[dir="auto"] {
         cursor: text;
