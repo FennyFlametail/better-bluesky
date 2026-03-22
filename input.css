@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-02-25
+@version        2026-03-22.a
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -394,7 +394,8 @@ Section headings (use Cmd-F to navigate)
 
     /* destructive buttons */
     :root.theme--light button[style*="background-color: rgb(233, 22, 70)"],
-    :root.theme--dim button[style*="background-color: rgb(235, 36, 82)"] {
+    :root.theme--dim button[style*="background-color: rgb(235, 36, 82)"],
+    button[aria-label="Discard"] {
         background-color: var(--tweak-danger) !important;
 
         @media not (prefers-reduced-motion: reduce) {
@@ -414,7 +415,8 @@ Section headings (use Cmd-F to navigate)
     }
     /* destructive buttons hover */
     :root.theme--light button[style*="background-color: rgb(202, 18, 61)"],
-    :root.theme--dim button[style*="background-color: rgb(247, 100, 134)"] {
+    :root.theme--dim button[style*="background-color: rgb(247, 100, 134)"],
+    button[aria-label="Discard"]:hover {
         background-color: var(--tweak-danger-darker) !important;
         
         @media not (prefers-reduced-motion: reduce) {
@@ -476,6 +478,7 @@ Section headings (use Cmd-F to navigate)
         /* post composer cancel and attachment buttons */
         button[aria-label="Cancel"],
         button[aria-label="Drafts"],
+        button[aria-label="Back"],
         button[aria-label="Add another post to thread"],
         button[data-testid="openMediaBtn"],
         button[data-testid="openGifBtn"],
@@ -510,6 +513,7 @@ Section headings (use Cmd-F to navigate)
         /* post composer cancel and attachment buttons */
         button[aria-label="Cancel"],
         button[aria-label="Drafts"],
+        button[aria-label="Back"],
         button[aria-label="Add another post to thread"],
         button[data-testid="openMediaBtn"],
         button[data-testid="openGifBtn"],
@@ -1090,8 +1094,9 @@ Section headings (use Cmd-F to navigate)
     div[aria-label="Close drawer menu"],
     /* post composer and some other modals (ex. "Add to lists") */
     div:is(.r-17c3jg3, div[style*="background-color: rgba(0, 0, 0, 0.8)"]),
-    /* some other modals */
+    /* various other modals */
     div[aria-label="Close active dialog"],
+    div[style*="inset: 0px"]:has(> div > div[role="dialog"]),
     /* image viewer */
     div[style*="inset: 0px"]:has(> button[aria-label="Close image viewer"]) {
         background: transparent !important;
@@ -1135,8 +1140,12 @@ Section headings (use Cmd-F to navigate)
 
     /* ----- !POST COMPOSER ----- */
 
-    /* fix Cancel and Drafts button color */
-    button:is([aria-label="Cancel"], [aria-label="Drafts"]) > div.css-146c3p1 {
+    /* fix post composer button colors */
+    button:is(
+        [aria-label="Cancel"],
+        [aria-label="Drafts"],
+        [aria-label="Back"]
+    ) > div.css-146c3p1 {
         color: var(--tweak-fg) !important;
     }
 
@@ -1212,7 +1221,7 @@ Section headings (use Cmd-F to navigate)
         background: var(--tweak-bg) !important;
         box-shadow: var(--tweak-shadow);
 
-        div[style^="color: "] {
+        div[style*="color: "] {
             color: var(--tweak-fg) !important;
         }
 
@@ -1237,6 +1246,22 @@ Section headings (use Cmd-F to navigate)
             fill: var(--tweak-bg) !important;
         }
     } */
+    
+    /* Drafts list */
+    :root.theme--light div[role="dialog"] div[style*="background-color: rgb(239, 242, 246)"],
+    :root.theme--dim div[role="dialog"] div[style*="background-color: rgb(0, 0, 0)"]{
+        background-color: var(--tweak-bg) !important;
+    }
+    button[aria-label="Open draft"] {
+        background-color: var(--tweak-bg) !important;
+        border-width: 1px !important;
+        box-shadow: none !important;
+        
+        &:hover {
+            background-color: var(--tweak-bg-secondary) !important;
+        }
+    }
+    
 
     /* ----- !IMAGES & VIDEO ----- */
 
@@ -1247,6 +1272,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* image viewer buttons */
+    button[aria-label="Image options"],
     button[aria-label="Close image viewer"],
     button[aria-label='Previous image'],
     button[aria-label='Next image'] {
