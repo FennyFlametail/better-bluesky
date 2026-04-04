@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-03-22.a
+@version        2026-04-04
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -889,6 +889,17 @@ Section headings (use Cmd-F to navigate)
                 transform: scale(0.85);
             }
         }
+        
+        /* activated states */
+        &:is([aria-label^="Unlike"], [aria-label="Remove from saved posts"]),
+        &:has(div[style*="font-weight: 600"]) {
+            div {
+                color: var(--tweak-accent) !important;
+            }
+            path {
+                fill: var(--tweak-accent) !important;
+            }
+        }
     }
     
     /* reply counts */
@@ -1207,9 +1218,9 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* character count circle */
-    div[data-testid='composePostView'] svg[width="30"][height="30"] path,
+    div[data-testid='composePostView'] svg[width="30"][height="30"] path[d^="M15 2.5"],
     /* alt text character count circle */
-    div[aria-label="Add alt text"] svg[width="26"][height="26"] path {
+    div[aria-label="Add alt text"] svg[width="26"][height="26"] path[d^="M13 2.5"] {
         stroke: var(--tweak-accent) !important;
     }
 
@@ -1224,28 +1235,7 @@ Section headings (use Cmd-F to navigate)
         div[style*="color: "] {
             color: var(--tweak-fg) !important;
         }
-
-        path {
-            fill: var(--tweak-fg) !important;
-        }
     }
-
-    /* TODO reply settings hover and selected */
-    /* div[aria-label="Edit post interaction settings"] :is(
-        button[aria-checked="true"] > div,
-        :root.theme--light div[style*="background-color: rgb(212, 219, 226)"],
-        :root.theme--dim div[style*="background-color: rgb(46, 64, 82)"]
-    ) {
-        background: var(--tweak-accent) !important;
-
-        > div {
-            color: var(--tweak-bg) !important;
-        }
-
-        path {
-            fill: var(--tweak-bg) !important;
-        }
-    } */
     
     /* Drafts list */
     :root.theme--light div[role="dialog"] div[style*="background-color: rgb(239, 242, 246)"],
@@ -1404,16 +1394,13 @@ Section headings (use Cmd-F to navigate)
 
     /* back button */
     button[data-testid="profileHeaderBackBtn"] {
+        background: transparent !important;
         > div[style^="align-items: center"] {
             background: var(--tweak-bg) !important;
 
             &:hover {
                 background: var(--tweak-bg-secondary) !important;
             }
-        }
-
-        path {
-            fill: var(--tweak-fg) !important;
         }
     }
 
