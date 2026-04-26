@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Better Bluesky
 @namespace      https://bsky.app/profile/fenny.zone
-@version        2026-04-04
+@version        2026-04-26
 @description    by @fenny.zone on Bluesky. Loosely based on the "blue blue sky" Arc boost by @twobabyteeth on Twitter.
 @author         https://bsky.app/profile/fenny.zone
 @supportURL     https://bsky.app/profile/fenny.zone
@@ -1461,7 +1461,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* message bubbles */
-    div[data-testid="convoScreen"] div[style^="padding: 8px 14px"]:has(> div[data-word-wrap="1"]) {
+    div[data-testid="convoScreen"] div[style*="padding: 8px 12px"]:has(> div[data-word-wrap="1"]) {
         /* incoming */
         &[style*="align-self: flex-start"] {
             background-color: var(--tweak-bg-secondary) !important;
@@ -1482,7 +1482,7 @@ Section headings (use Cmd-F to navigate)
     }
 
     /* message text field */
-    div[style*="height: 44px;"]:has(> textarea[placeholder="Write a message"]) {
+    div[data-testid="convoScreen"] div[style*="height: 44px;"]:has(> button[aria-label="Open emoji picker"] + textarea) {
         align-items: center;
         background-color: var(--tweak-fg-more-translucent) !important;
 
@@ -1490,6 +1490,10 @@ Section headings (use Cmd-F to navigate)
         > textarea[placeholder="Write a message"],
         > button[aria-label="Send message"] {
             margin-top: 0 !important;
+            padding-block: 0 !important;
+        }
+        
+        > textarea {
             padding-block: 0 !important;
             resize: none !important;
         }
